@@ -11,7 +11,7 @@ public class Process {
     public Process() {
     }
 
-    public Process(String name, double arrivalTime, double burstTime) {
+    public Process(String name, double arrivalTime, double burstTime , int priorityNum) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;

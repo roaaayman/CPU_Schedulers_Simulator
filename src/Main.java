@@ -21,12 +21,16 @@ public class Main {
             System.out.print("Burst Time: ");
             double burstTime = scanner.nextDouble();
 
-            processes.add(new Process(name, arrivalTime, burstTime));
+            System.out.println("Priority Num: ");
+            int priorityNum = scanner.nextInt();
+
+            processes.add(new Process(name, arrivalTime, burstTime, priorityNum));
         }
 
         System.out.println("Select Scheduler:");
         System.out.println("1. SJF (Shortest Job First)");
         System.out.println("2. SRTF (Shortest Remaining Time First)");
+        System.out.println("3. Priority Scheduling");
         int choice = scanner.nextInt();
 
         switch (choice) {
@@ -47,8 +51,9 @@ public class Main {
                 srtfScheduler.schedule();
                 break;
             case 3:
+                // Execute Priority Scheduler
                 PriorityScheduling priorityScheduler = new PriorityScheduling();
-                priorityScheduler.setProcesses(processes);
+                priorityScheduler.setProcesses(new ArrayList<>(processes));
 
                 System.out.println("Executing Priority Scheduling Algorithm:");
                 priorityScheduler.schedule();
