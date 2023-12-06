@@ -2,15 +2,16 @@ public class Process {
     private String name;
     private String color;
     private double arrivalTime;
+    private double originalBurstTime;
     private double burstTime;
     private int priorityNum;
     private double turnaround;
-    private double waittime;
+    private double waitTime;
 
     public Process() {
     }
 
-    public Process(String name, double arrivalTime, double burstTime,int priorityNum) {
+    public Process(String name, double arrivalTime, double burstTime) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
@@ -34,9 +35,18 @@ public class Process {
         this.burstTime = burstTime;
     }
 
-    public void setPriorityNum(int priorityNum) {
+    public void setOriginalBurstTime(double originalBurstTime) {this.originalBurstTime = originalBurstTime;}
+
+    public void setPriority(int priorityNum) {
         this.priorityNum = priorityNum;
     }
+    public void setTurnaround(double turnaround) {this.turnaround = turnaround;}
+
+    public void setWaitTime(double waitTime) {this.waitTime = waitTime;}
+
+
+
+
 
     // Getters
     public String getName() {
@@ -54,8 +64,15 @@ public class Process {
     public double getBurstTime() {
         return burstTime;
     }
+    public double getOriginalBurstTime() {return originalBurstTime;}
 
     public int getPriority() {
         return priorityNum;
     }
+
+
+    public double getTurnaround() {return turnaround;}
+
+    public double getWaitTime() {return waitTime;}
 }
+
