@@ -49,6 +49,7 @@ public class SJF implements Ischeduler {
             System.out.println("turn around time " + process.getName() +  turnaroundtime);
 
 
+            //variables
             totalwaitingtime += waitingtime;
             totalturnaroundtime += turnaroundtime;
         }

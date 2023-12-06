@@ -11,6 +11,7 @@ public class Process {
     public Process() {
     }
 
+    //constructor
     public Process(String name, double arrivalTime, double burstTime , int priorityNum) {
         this.name=name;
         this.arrivalTime=arrivalTime;

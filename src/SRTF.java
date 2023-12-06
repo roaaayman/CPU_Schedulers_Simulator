@@ -60,6 +60,7 @@ public class SRTF implements Ischeduler {
             }
         }
 
+        //variables
         double totalWaitingTime = 0;
         double totalTurnaroundTime = 0;
 

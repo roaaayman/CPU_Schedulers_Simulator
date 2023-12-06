@@ -55,7 +55,7 @@ public class Main {
                 PriorityScheduling priorityScheduler = new PriorityScheduling();
                 priorityScheduler.setProcesses(new ArrayList<>(processes));
 
-                System.out.println("Executing Priority Scheduling Algorithm:");
+                System.out.println("\nExecuting Priority Scheduling Algorithm:");
                 priorityScheduler.schedule();
                 break;
             default:

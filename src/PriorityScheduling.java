@@ -10,7 +10,7 @@ public class PriorityScheduling implements Ischeduler {
 
     @Override
     public void schedule() {
-        // Sort the processes based on arrival time
+        // Sort the processes based on Arrival time
         processes.sort(Comparator.comparingDouble(Process::getArrivalTime));
 
         // Then sort based on priority within each arrival time group
