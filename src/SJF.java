@@ -31,8 +31,11 @@ public class SJF implements Ischeduler {
         sortBasedOnArrivalAndBurstTime();
         double currentTime = 0; // Initialize current time to 0
 
-        double totalwaitingtime = 0;
-        double totalturnaroundtime=0;
+        double totalWaitingTime = 0;
+        double totalTurnaroundTime = 0;
+        int context_switch_cost=1;
+
+
         for (Process process : processes) {
             if (currentTime < process.getArrivalTime()) {
                 currentTime = process.getArrivalTime();
@@ -43,21 +46,22 @@ public class SJF implements Ischeduler {
             currentTime += process.getBurstTime();
             double finishTime = currentTime;
             System.out.println("Finish Time for Process " + process.getName() + ": " + finishTime);
-            double waitingtime = finishTime-process.getBurstTime()-process.getArrivalTime();
-            double turnaroundtime = process.getBurstTime() + waitingtime;
-            System.out.println("WAITING TIME " + process.getName() +  waitingtime);
-            System.out.println("turn around time " + process.getName() +  turnaroundtime);
+            double waitingTime = startTime - process.getArrivalTime();
+            double turnaroundTime = finishTime - process.getArrivalTime();
+            System.out.println("Waiting Time for " + process.getName() + ": " + waitingTime);
+            System.out.println("Turnaround Time for " + process.getName() + ": " + turnaroundTime);
 
+            // Consider context switch cost for the next process
+            currentTime += context_switch_cost;
 
-            //variables
-            totalwaitingtime += waitingtime;
-            totalturnaroundtime += turnaroundtime;
+            // Update total times
+            totalWaitingTime += waitingTime;
+            totalTurnaroundTime += turnaroundTime;
         }
-        double averagewaitingtime = totalwaitingtime / processes.size();
-        double averageturnaroundtime= totalturnaroundtime / processes.size();
-        System.out.println("Average Waiting Time: " + averagewaitingtime);
-        System.out.println("Average turnaround Time: " + averageturnaroundtime);
-
-
+        double averageWaitingTime = totalWaitingTime / processes.size();
+        double averageTurnaroundTime = totalTurnaroundTime / processes.size();
+        System.out.println("Average Waiting Time: " + averageWaitingTime);
+        System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
     }
+
 }
