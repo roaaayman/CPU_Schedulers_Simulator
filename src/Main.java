@@ -9,6 +9,8 @@ public class Main {
         List<Process> processes = new ArrayList<>();
         System.out.print("Enter the number of processes: ");
         int numProcesses = scanner.nextInt();
+        System.out.print("Enter the context switch cost ");
+        int contextSwitchCost = scanner.nextInt();
 
         for (int i = 0; i < numProcesses; i++) {
             System.out.println("Enter details for Process " + (i + 1) + ":");
@@ -36,7 +38,7 @@ public class Main {
         switch (choice) {
             case 1:
                 // Execute SJF Scheduler
-                SJF sjfScheduler = new SJF();
+                SJF sjfScheduler = new SJF(contextSwitchCost);
                 sjfScheduler.setProcesses(new ArrayList<>(processes));
 
                 System.out.println("Executing SJF Scheduling Algorithm:");

@@ -75,5 +75,14 @@ public class Process {
     public double getTurnaround() {return turnaround;}
 
     public double getWaitTime() {return waitTime;}
+
+    public void incrementPrioritybyaging() {
+
+        priorityNum++;
+    }
+    public void decrementPrioritybyaging() {
+
+        priorityNum--;
+    }
 }
 

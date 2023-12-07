@@ -3,6 +3,11 @@ import java.util.List;
 public class SJF implements Ischeduler {
     private List<Process> processes;
 
+    int context_switch_cost;
+    public SJF(int contextSwitchCost) {
+         context_switch_cost=contextSwitchCost;
+    }
+
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
     }
@@ -33,7 +38,7 @@ public class SJF implements Ischeduler {
 
         double totalWaitingTime = 0;
         double totalTurnaroundTime = 0;
-        int context_switch_cost=1;
+
 
 
         for (Process process : processes) {
@@ -54,7 +59,7 @@ public class SJF implements Ischeduler {
             // Consider context switch cost for the next process
             currentTime += context_switch_cost;
 
-            // Update total times
+
             totalWaitingTime += waitingTime;
             totalTurnaroundTime += turnaroundTime;
         }

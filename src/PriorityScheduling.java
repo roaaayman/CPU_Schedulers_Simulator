@@ -10,10 +10,7 @@ public class PriorityScheduling implements Ischeduler {
 
     @Override
     public void schedule() {
-        // Sort the processes based on Arrival time
         processes.sort(Comparator.comparingDouble(Process::getArrivalTime));
-
-        // Then sort based on priority within each arrival time group
         processes.sort((p1, p2) -> {
             if (p1.getArrivalTime() == p2.getArrivalTime()) {
                 return Double.compare(p1.getPriority(), p2.getPriority());
@@ -44,6 +41,16 @@ public class PriorityScheduling implements Ischeduler {
 
             totalWaitingTime += waitingTime;
             totalTurnaroundTime += turnaroundTime;
+
+            // Aging: Increment priority of all waiting processes
+            for (Process p : processes) {
+                if (p != process && p.getArrivalTime() <= currentTime) {
+                    p.incrementPrioritybyaging(); // Assuming you have a method to increment priority in the Process class
+                    if (p.getWaitTime() % 5 == 0) { // Simulating aging every 5 time units
+                        p.decrementPrioritybyaging(); // Assuming you have a method to decrement priority in the Process class
+                    }
+                }
+            }
         }
 
         double averageWaitingTime = totalWaitingTime / processes.size();
