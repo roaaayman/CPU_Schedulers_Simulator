@@ -81,9 +81,9 @@ public class Process {
 
         priorityNum++;
     }
-    public void decrementPrioritybyaging() {
-
-        priorityNum--;
-    }
+//    public void decrementPrioritybyaging() {
+//
+//        priorityNum--;
+//    }
 }
 
