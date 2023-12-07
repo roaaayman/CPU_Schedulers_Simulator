@@ -50,11 +50,15 @@ public class SJF implements Ischeduler {
 
             currentTime += process.getBurstTime();
             double finishTime = currentTime;
+            System.out.println("--------------------------------");
+            System.out.println("Time Detials for Process " + process.getName() + " :  \n");
             System.out.println("Finish Time for Process " + process.getName() + ": " + finishTime);
             double waitingTime = startTime - process.getArrivalTime();
             double turnaroundTime = finishTime - process.getArrivalTime();
             System.out.println("Waiting Time for " + process.getName() + ": " + waitingTime);
             System.out.println("Turnaround Time for " + process.getName() + ": " + turnaroundTime);
+            System.out.println("--------------------------------");
+
 
             // Consider context switch cost for the next process
             currentTime += context_switch_cost;

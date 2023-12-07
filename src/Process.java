@@ -81,6 +81,10 @@ public class Process {
 
         priorityNum++;
     }
+
+    public void incrementWaitingTime() {
+        waitTime++;
+    }
 //    public void decrementPrioritybyaging() {
 //
 //        priorityNum--;

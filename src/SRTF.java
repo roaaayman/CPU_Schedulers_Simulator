@@ -41,7 +41,9 @@ public class SRTF implements Ischeduler {
             for (int i = 0; i < processes.size(); i++) {
                 Process process = processes.get(i);
                 if (process != shortest && process.getArrivalTime() <= currentTime && !executedProcesses.contains(process) && process.getBurstTime() < shortest.getBurstTime()) {
+                    System.out.println("--------------------------------");
                     System.out.println("Preempting Process: " + shortest.getName() + " at time " + currentTime);
+                    System.out.println("--------------------------------");
                     executedProcesses.remove(shortest);
                     shortest = process;
                     startTime = currentTime;
@@ -59,10 +61,14 @@ public class SRTF implements Ischeduler {
 
                 shortest.setWaitTime(waitingTime);
                 shortest.setTurnaround(turnaroundTime);
-
+                System.out.println("--------------------------------");
+                System.out.println("Time Detials for Process " + shortest.getName() + " :  \n");
                 System.out.println("Finish Time for Process " + shortest.getName() + ": " + finishTime);
                 System.out.println("Waiting Time for Process " + shortest.getName() + ": " + waitingTime);
                 System.out.println("Turnaround Time for Process " + shortest.getName() + ": " + turnaroundTime);
+                System.out.println("--------------------------------");
+
+
             }
         }
 

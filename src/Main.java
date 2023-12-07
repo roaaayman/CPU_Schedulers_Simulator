@@ -27,7 +27,7 @@ public class Main {
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
 
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime , priorityNum));
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum));
         }
 
         System.out.println("Select Scheduler:");
@@ -42,7 +42,7 @@ public class Main {
                 SJF sjfScheduler = new SJF(contextSwitchCost);
                 sjfScheduler.setProcesses(new ArrayList<>(processes));
 
-                System.out.println("Executing SJF Scheduling Algorithm:");
+                System.out.println("Executing SJF Scheduling Algorithm: \n");
                 sjfScheduler.schedule();
                 break;
             case 2:
@@ -50,7 +50,7 @@ public class Main {
                 SRTF srtfScheduler = new SRTF();
                 srtfScheduler.setProcesses(new ArrayList<>(processes));
 
-                System.out.println("\nExecuting SRTF Scheduling Algorithm:");
+                System.out.println("\nExecuting SRTF Scheduling Algorithm: \n");
                 srtfScheduler.schedule();
                 break;
             case 3:
@@ -58,7 +58,7 @@ public class Main {
                 PriorityScheduling priorityScheduler = new PriorityScheduling();
                 priorityScheduler.setProcesses(new ArrayList<>(processes));
 
-                System.out.println("\nExecuting Priority Scheduling Algorithm:");
+                System.out.println("\nExecuting Priority Scheduling Algorithm: \n");
                 priorityScheduler.schedule();
                 break;
             default:

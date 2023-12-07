@@ -1,9 +1,12 @@
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class PriorityScheduling implements Ischeduler {
     private List<Process> processes;
-    int agingThreshold=5;
+    private List<Process> executedProcesses;
+    private List<Process> waitingProcesses;
+    int agingThreshold = 5;
 
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
@@ -22,6 +25,9 @@ public class PriorityScheduling implements Ischeduler {
             return 0;
         });
 
+        executedProcesses = new ArrayList<>();
+        waitingProcesses = new ArrayList<>();
+
         double totalWaitingTime = 0;
         double totalTurnaroundTime = 0;
         double currentTime = 0;
@@ -36,21 +42,50 @@ public class PriorityScheduling implements Ischeduler {
 
             currentTime += process.getBurstTime();
             double finishTime = currentTime;
+            System.out.println("--------------------------------");
+            System.out.println("Time Details for Process " + process.getName() + " :  \n");
+
             System.out.println("Finish Time for Process " + process.getName() + ": " + finishTime);
 
             double turnaroundTime = finishTime - process.getArrivalTime();
             double waitingTime = turnaroundTime - process.getBurstTime();
             System.out.println("Waiting Time for Process " + process.getName() + ": " + waitingTime);
             System.out.println("Turnaround Time for Process " + process.getName() + ": " + turnaroundTime);
+            System.out.println("--------------------------------");
 
             totalWaitingTime += waitingTime;
             totalTurnaroundTime += turnaroundTime;
 
+            executedProcesses.add(process);
+
             // Aging: Increment priority of all waiting processes
             for (Process p : processes) {
-                if ( p.getWaitTime() >= agingThreshold) {
+                if (p != process && p.getWaitTime() >= agingThreshold) {
                     p.incrementPrioritybyaging(); // Increment priority based on waiting time
                 }
+            }
+
+            // Find waiting processes
+            waitingProcesses.clear();
+            for (Process p : processes) {
+                if (!executedProcesses.contains(p)) {
+                    waitingProcesses.add(p);
+                }
+            }
+
+            System.out.println("Executed Processes:");
+            for (Process p : executedProcesses) {
+                System.out.println("[Name: " + p.getName() + ", Arrival Time: " + p.getArrivalTime() +
+                        ", Burst Time: " + p.getBurstTime() + ", Priority: " + p.getPriority() + "].");
+
+            }
+            System.out.println("         ***********************         ");
+
+            System.out.println("Waiting Processes:");
+            for (Process p : waitingProcesses) {
+                System.out.println("[Name: " + p.getName() + ", Arrival Time: " + p.getArrivalTime() +
+                        ", Burst Time: " + p.getBurstTime() + ", Priority: " + p.getPriority() + "].");
+
             }
 
         }
