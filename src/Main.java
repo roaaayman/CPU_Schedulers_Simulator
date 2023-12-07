@@ -22,11 +22,12 @@ public class Main {
 
             System.out.print("Burst Time: ");
             double burstTime = scanner.nextDouble();
+            double originalBurstTime = burstTime;
 
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
 
-            processes.add(new Process(name, arrivalTime, burstTime, priorityNum));
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime , priorityNum));
         }
 
         System.out.println("Select Scheduler:");

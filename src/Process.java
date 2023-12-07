@@ -12,10 +12,11 @@ public class Process {
     }
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , int priorityNum) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
+        this.originalBurstTime=burstTime;
         this.priorityNum=priorityNum;
     }
 
