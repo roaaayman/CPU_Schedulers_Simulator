@@ -94,14 +94,14 @@ public class AG implements Ischeduler {
                         {
                             quantum+=Math.ceil(0.1*(quantum/2));
                             readyQueue.add(currentProcess);
-                            break;
+
                         }
                         //scenario 2: check if the running process didnt use all of its quantum time because it was interupted
                         else if ( remainingQuantum>0 && currentProcess.getBurstTime()>0)
                         {
                             readyQueue.add(currentProcess);
                             quantum+=remainingQuantum;
-                            break;
+
 
                         }
                         //scenario 3: check if the running process finished its job
@@ -110,7 +110,7 @@ public class AG implements Ischeduler {
                             finishedProcesses.add(currentProcess);
                             readyQueue.remove(currentProcess);
                             quantum=0;
-                            break;
+
                         }
 
 
