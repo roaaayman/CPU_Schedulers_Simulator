@@ -28,8 +28,10 @@ public class Main {
 
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
-            double remainingtime = 0;
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum, (int) remainingtime));
+            System.out.println("ENTER COLOR OF THE PROCESS");
+            String color =scanner.next();
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,color));
+
         }
 
         System.out.println("Select Scheduler:");
