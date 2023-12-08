@@ -10,17 +10,16 @@ public class Process {
     private double waitTime;
     private double remainingtime;
 
-    public Process() {
-    }
+
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int remainingtime) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, String color) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
         this.originalBurstTime=burstTime;
         this.priorityNum=priorityNum;
-        this.remainingtime=remainingtime;
+        this.color=color;
     }
 
     // Setters

@@ -2,10 +2,10 @@ import java.util.List;
 
 public class SJF implements Ischeduler {
     private List<Process> processes;
+    public int context_switch_cost;
 
-    int context_switch_cost;
     public SJF(int contextSwitchCost) {
-         context_switch_cost=contextSwitchCost;
+        context_switch_cost = contextSwitchCost;
     }
 
     public void setProcesses(List<Process> processes) {
@@ -34,24 +34,37 @@ public class SJF implements Ischeduler {
     @Override
     public void schedule() {
         sortBasedOnArrivalAndBurstTime();
+
+        ProcessVisualization visualization = new ProcessVisualization(processes);
         double currentTime = 0; // Initialize current time to 0
 
         double totalWaitingTime = 0;
         double totalTurnaroundTime = 0;
 
-
-
         for (Process process : processes) {
             if (currentTime < process.getArrivalTime()) {
                 currentTime = process.getArrivalTime();
             }
+
+
+
             double startTime = currentTime;
+            // Simulate the execution of the process step by step
+            for (int i = 0; i < process.getBurstTime(); i++) {
+                visualization.animateExecution();
+                try {
+                    Thread.sleep(500); // Adjust the sleep duration for visualization speed
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             System.out.println("Executing Process: " + process.getName() + " from time " + startTime);
 
             currentTime += process.getBurstTime();
             double finishTime = currentTime;
             System.out.println("--------------------------------");
-            System.out.println("Time Detials for Process " + process.getName() + " :  \n");
+            System.out.println("Time Details for Process " + process.getName() + " :  \n");
             System.out.println("Finish Time for Process " + process.getName() + ": " + finishTime);
             double waitingTime = startTime - process.getArrivalTime();
             double turnaroundTime = finishTime - process.getArrivalTime();
@@ -59,18 +72,16 @@ public class SJF implements Ischeduler {
             System.out.println("Turnaround Time for " + process.getName() + ": " + turnaroundTime);
             System.out.println("--------------------------------");
 
-
             // Consider context switch cost for the next process
             currentTime += context_switch_cost;
-
 
             totalWaitingTime += waitingTime;
             totalTurnaroundTime += turnaroundTime;
         }
+
         double averageWaitingTime = totalWaitingTime / processes.size();
         double averageTurnaroundTime = totalTurnaroundTime / processes.size();
         System.out.println("Average Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
     }
-
 }
