@@ -1,9 +1,14 @@
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class AG implements Ischeduler {
-    private double AGFactor;
     private List<Process> processes;
+
+    private int quantum;
+
+    public AG(int quantum) {
+        this.quantum = quantum;
+        this.processes = new ArrayList<>();
+    }
 
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
@@ -14,27 +19,88 @@ public class AG implements Ischeduler {
         return random.nextInt(21); // Generates a number between 0 and 20
     }
 
-    public void setAGFactor() {
-        for (Process process : processes)
-        {
-            double arrivalTime = process.getArrivalTime();
-            double burstTime = process.getBurstTime();
-            double prioritynum= process.getPriority();
-            if (randomFactor() < 10) {
-                AGFactor = randomFactor() + arrivalTime + burstTime;
-            }
-            if (randomFactor() >10) {
-                AGFactor = 10 + arrivalTime + burstTime;
-            }
-            if (randomFactor() == 10) {
-                AGFactor = prioritynum + arrivalTime + burstTime;
-            }
+    private double calculateAGFactor(Process process) {
+        double arrivalTime = process.getArrivalTime();
+        double burstTime = process.getBurstTime();
+        double priority = process.getPriority();
 
+        int randomValue = randomFactor();
+        double AGFactor;
+
+        if (randomValue < 10) {
+            AGFactor = randomValue + arrivalTime + burstTime;
+        } else if (randomValue > 10) {
+            AGFactor = 10 + arrivalTime + burstTime;
+        } else {
+            AGFactor = priority + arrivalTime + burstTime;
         }
+        return AGFactor;
     }
 
     @Override
     public void schedule() {
-        // Implement your scheduling logic here
+        Queue<Process> readyQueue = new LinkedList<>(processes);
+        List<Process> executedProcesses = new ArrayList<>();
+        List<Process> finishedProcesses = new ArrayList<>();
+
+        while (!readyQueue.isEmpty()) {
+            Process currentProcess = readyQueue.poll(); //removes and returns the head of the queue.
+            double agFactor = calculateAGFactor(currentProcess);
+
+            boolean isPreemptive = false;
+            double remainingQuantum = quantum;
+
+            while (remainingQuantum > 0)
+            {
+                double executionTime = Math.min(currentProcess.getBurstTime(), remainingQuantum);
+
+                // Non-preemptive AG logic
+                if (!isPreemptive && remainingQuantum <= (0.5 * quantum)) {
+                    isPreemptive = true;
+                    currentProcess.setPreemptive(true);
+                }
+
+                // Process execution based on preemptive/non-preemptive AG
+                if (!currentProcess.isPreemptive())
+                {
+                    // Non-preemptive AG
+                    currentProcess.setBurstTime(currentProcess.getBurstTime() - executionTime);
+
+                    if (currentProcess.getBurstTime() <= 0) {
+                        executedProcesses.add(currentProcess);
+                        break;
+                    }
+                } else {
+                    // Preemptive AG
+                    if (currentProcess.isPreemptive()) {
+                        // Check if there's a smaller AG-Factor process that arrived
+                        for (Process p : readyQueue) {
+                            if (calculateAGFactor(p) < agFactor) {
+                                readyQueue.add(currentProcess); // Add the current process back to the queue
+                                currentProcess = p; // Set the current process to the new smaller AG-Factor process
+                                agFactor = calculateAGFactor(p); // Update AG-Factor
+                                break;
+                            }
+                        }
+                        // Execute the current process for the shortest time between burst time and remaining quantum
+                        currentProcess.setBurstTime(currentProcess.getBurstTime() - executionTime);
+
+                        if (currentProcess.getBurstTime() <= 0) {
+                            executedProcesses.add(currentProcess);
+                            break;
+                        }
+                    }
+                }
+                remainingQuantum -= executionTime;
+            }
+
+            //check if process has completely finished or not
+            if (currentProcess.getBurstTime() > 0)
+            {
+                readyQueue.add(currentProcess);
+            } else {
+                finishedProcesses.add(currentProcess);
+            }
+        }
     }
 }
