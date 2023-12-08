@@ -38,16 +38,17 @@ public class SRTF implements Ischeduler {
             shortest.setBurstTime(shortest.getBurstTime() - 1);
             currentTime++;
 
-            for (int i = 0; i < processes.size(); i++) {
-                Process process = processes.get(i);
-                if (process != shortest && process.getArrivalTime() <= currentTime && !executedProcesses.contains(process) && process.getBurstTime() < shortest.getBurstTime()) {
-                    System.out.println("--------------------------------");
-                    System.out.println("Preempting Process: " + shortest.getName() + " at time " + currentTime);
-                    System.out.println("--------------------------------");
-                    executedProcesses.remove(shortest);
-                    shortest = process;
-                    startTime = currentTime;
-                    System.out.println("Executing Process: " + shortest.getName() + " from time " + startTime);
+            // Aging: Decrement priority for waiting processes
+            for (Process process : processes) {
+                if (!executedProcesses.contains(process) && process != shortest) {
+                    int priority = process.getPriority();
+                    if (currentTime - process.getArrivalTime() > 0) {
+                        if (priority < 1) {
+                            process.setPriority(1);
+                        } else {
+                            process.setPriority(priority);
+                        }
+                    }
                 }
             }
 
@@ -57,21 +58,28 @@ public class SRTF implements Ischeduler {
 
                 double finishTime = currentTime;
                 double turnaroundTime = finishTime - shortest.getArrivalTime();
-                double waitingTime = turnaroundTime - shortest.getOriginalBurstTime() ;
+                double waitingTime = turnaroundTime - shortest.getOriginalBurstTime();
 
                 shortest.setWaitTime(waitingTime);
                 shortest.setTurnaround(turnaroundTime);
                 System.out.println("--------------------------------");
-                System.out.println("Time Detials for Process " + shortest.getName() + " :  \n");
+                System.out.println("Time Details for Process " + shortest.getName() + " :  \n");
                 System.out.println("Finish Time for Process " + shortest.getName() + ": " + finishTime);
                 System.out.println("Waiting Time for Process " + shortest.getName() + ": " + waitingTime);
                 System.out.println("Turnaround Time for Process " + shortest.getName() + ": " + turnaroundTime);
                 System.out.println("--------------------------------");
-
-
+            } else {
+                for (Process process : processes) {
+                    if (!executedProcesses.contains(process) && process != shortest &&
+                            process.getArrivalTime() <= currentTime && process.getBurstTime() < shortest.getBurstTime()) {
+                        System.out.println("****Preempting Process: " + shortest.getName() + " at time " + currentTime);
+                        break;
+                    }
+                }
             }
         }
 
+        // Calculate averages
         double totalWaitingTime = 0;
         double totalTurnaroundTime = 0;
 
