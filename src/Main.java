@@ -11,6 +11,8 @@ public class Main {
         int numProcesses = scanner.nextInt();
         System.out.print("Enter the context switch cost ");
         int contextSwitchCost = scanner.nextInt();
+        System.out.println("enter the Round Robin time quantum ");
+        int TimeQuantum = scanner.nextInt();
 
         for (int i = 0; i < numProcesses; i++) {
             System.out.println("Enter details for Process " + (i + 1) + ":");
@@ -34,6 +36,8 @@ public class Main {
         System.out.println("1. SJF (Shortest Job First)");
         System.out.println("2. SRTF (Shortest Remaining Time First)");
         System.out.println("3. Priority Scheduling");
+        System.out.println("3. Round Robin Scheduling");
+
         int choice = scanner.nextInt();
 
         switch (choice) {
@@ -61,6 +65,16 @@ public class Main {
                 System.out.println("\nExecuting Priority Scheduling Algorithm: \n");
                 priorityScheduler.schedule();
                 break;
+            case 4:
+
+                // execute Round Robin
+                RoundRobin RoundRobinScheduler = new RoundRobin(TimeQuantum);
+                RoundRobinScheduler.setProcesses(new ArrayList<>(processes));
+                System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
+                RoundRobinScheduler.schedule();
+
+
+
             default:
                 System.out.println("Invalid choice. Exiting...");
         }
