@@ -1,4 +1,5 @@
 public class Process {
+
     private String name;
     private String color;
     private double arrivalTime;
@@ -7,17 +8,19 @@ public class Process {
     private int priorityNum;
     private double turnaround;
     private double waitTime;
+    private double remainingtime;
 
     public Process() {
     }
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int remainingtime) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
         this.originalBurstTime=burstTime;
         this.priorityNum=priorityNum;
+        this.remainingtime=remainingtime;
     }
 
     // Setters
@@ -45,6 +48,7 @@ public class Process {
     public void setTurnaround(double turnaround) {this.turnaround = turnaround;}
 
     public void setWaitTime(double waitTime) {this.waitTime = waitTime;}
+    public void setRemainingtime(double remainingtime) {this.remainingtime = remainingtime;}
 
 
 
@@ -76,6 +80,7 @@ public class Process {
     public double getTurnaround() {return turnaround;}
 
     public double getWaitTime() {return waitTime;}
+    public double getRemainingtime(){return remainingtime;}
 
     public void incrementPrioritybyaging() {
 

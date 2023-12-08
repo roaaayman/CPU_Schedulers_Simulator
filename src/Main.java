@@ -28,15 +28,15 @@ public class Main {
 
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
-
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum));
+            double remainingtime = 0;
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum, (int) remainingtime));
         }
 
         System.out.println("Select Scheduler:");
         System.out.println("1. SJF (Shortest Job First)");
         System.out.println("2. SRTF (Shortest Remaining Time First)");
         System.out.println("3. Priority Scheduling");
-        System.out.println("3. Round Robin Scheduling");
+        System.out.println("4. Round Robin Scheduling");
 
         int choice = scanner.nextInt();
 
@@ -68,12 +68,13 @@ public class Main {
             case 4:
 
                 // execute Round Robin
-                RoundRobin RoundRobinScheduler = new RoundRobin(TimeQuantum);
-                RoundRobinScheduler.setProcesses(new ArrayList<>(processes));
-                System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
-                RoundRobinScheduler.schedule();
-
-
+//                RoundRobin RoundRobinScheduler = new RoundRobin(TimeQuantum);
+//                RoundRobinScheduler.setProcesses(new ArrayList<>(processes));
+//                System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
+//                RoundRobinScheduler.schedule();
+//                break;
+//
+//
 
             default:
                 System.out.println("Invalid choice. Exiting...");
