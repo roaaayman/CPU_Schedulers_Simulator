@@ -9,10 +9,11 @@ public class Main {
         List<Process> processes = new ArrayList<>();
         System.out.print("Enter the number of processes: ");
         int numProcesses = scanner.nextInt();
+        System.out.print("Enter time quantum for Round Robin: ");
+        int timeQuantum = scanner.nextInt();
         System.out.print("Enter the context switch cost ");
         int contextSwitchCost = scanner.nextInt();
-        System.out.println("enter the Round Robin time quantum ");
-        int TimeQuantum = scanner.nextInt();
+
 
         for (int i = 0; i < numProcesses; i++) {
             System.out.println("Enter details for Process " + (i + 1) + ":");
@@ -29,7 +30,7 @@ public class Main {
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
             double remainingtime = 0;
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum, (int) remainingtime));
+           // processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum, color));
         }
 
         System.out.println("Select Scheduler:");
@@ -66,16 +67,13 @@ public class Main {
                 priorityScheduler.schedule();
                 break;
             case 4:
+                // Execute Round Robin Scheduler
+                RR roundRobinScheduler = new RR(timeQuantum);
+                roundRobinScheduler.setProcesses(new ArrayList<>(processes));
 
-                // execute Round Robin
-//                RoundRobin RoundRobinScheduler = new RoundRobin(TimeQuantum);
-//                RoundRobinScheduler.setProcesses(new ArrayList<>(processes));
-//                System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
-//                RoundRobinScheduler.schedule();
-//                break;
-//
-//
-
+                System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
+                roundRobinScheduler.schedule();
+                break;
             default:
                 System.out.println("Invalid choice. Exiting...");
         }
