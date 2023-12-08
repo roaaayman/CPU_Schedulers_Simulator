@@ -9,6 +9,7 @@ public class Process {
     private double turnaround;
     private double waitTime;
     private double remainingtime;
+    private boolean preemptive;
 
 
 
@@ -47,8 +48,10 @@ public class Process {
     public void setTurnaround(double turnaround) {this.turnaround = turnaround;}
 
     public void setWaitTime(double waitTime) {this.waitTime = waitTime;}
-    public void setRemainingtime(double remainingtime) {this.remainingtime = remainingtime;}
 
+    public void setPreemptive(boolean preemptive) {
+        this.preemptive = preemptive;
+    }
 
 
 
@@ -86,12 +89,10 @@ public class Process {
         priorityNum++;
     }
 
-    public void incrementWaitingTime() {
-        waitTime++;
+    public boolean isPreemptive() {
+        return preemptive;
     }
-//    public void decrementPrioritybyaging() {
-//
-//        priorityNum--;
-//    }
+
+
 }
 
