@@ -32,7 +32,7 @@ public class PriorityScheduling implements Ischeduler {
         double totalTurnaroundTime = 0;
         double currentTime = 0;
 
-        for (Process process : processes) {
+        for (Process process : new ArrayList<>(processes)) {
             if (currentTime < process.getArrivalTime()) {
                 currentTime = process.getArrivalTime();
             }
@@ -57,13 +57,20 @@ public class PriorityScheduling implements Ischeduler {
             totalTurnaroundTime += turnaroundTime;
 
             executedProcesses.add(process);
+//            //aging apply
+//            for (Process p : processes) {
+//                if (!executedProcesses.contains(p) && (currentTime - p.getArrivalTime() >= agingThreshold)) {
+//                    double scaleFactor = 0.1; // Adjust this scaling factor as needed
+//                    int newPriority = (int) (p.getPriority() *scaleFactor);
+//
+//                    // Set the new priority for the current process 'p'
+//                    p.setPriority(newPriority);
+//                }
+//            }
 
-            // Aging: Increment priority of all waiting processes
-            for (Process p : processes) {
-                if (p != process && p.getWaitTime() >= agingThreshold) {
-                    p.incrementPrioritybyaging(); // Increment priority based on waiting time
-                }
-            }
+
+
+
 
             // Find waiting processes
             waitingProcesses.clear();
@@ -72,8 +79,25 @@ public class PriorityScheduling implements Ischeduler {
                     waitingProcesses.add(p);
                 }
             }
+            // Check for the processes that arrived before the finish time of the current process
+            List<Process> arrivedProcesses = new ArrayList<>();
+            for (Process p : waitingProcesses) {
+                if (p.getArrivalTime() < finishTime) {
+                    arrivedProcesses.add(p);
+                }
+            }
 
-            System.out.println("Executed Processes:");
+            arrivedProcesses.sort(Comparator.comparingInt(Process::getPriority));
+            if (!arrivedProcesses.isEmpty()) {
+                Process nextProcess = arrivedProcesses.get(0);
+                processes.remove(nextProcess);
+                processes.add(0, nextProcess);
+            }
+
+
+
+
+        System.out.println("Executed Processes:");
             for (Process p : executedProcesses) {
                 System.out.println("[Name: " + p.getName() + ", Arrival Time: " + p.getArrivalTime() +
                         ", Burst Time: " + p.getBurstTime() + ", Priority: " + p.getPriority() + "].");
