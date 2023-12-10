@@ -24,7 +24,7 @@ public class AG implements Ischeduler {
         double burstTime = process.getBurstTime();
         double priority = process.getPriority();
 
-        int randomValue = randomFactor();
+        int randomValue = process.getRandom();
         double AGFactor;
 
         if (randomValue < 10) {
@@ -48,37 +48,29 @@ public class AG implements Ischeduler {
             Process currentProcess = readyQueue.poll();
             double agFactor = calculateAGFactor(currentProcess);
 
-            double remainingQuantum = quantum;
 
+            double remainingQuantum = quantum;
 
             while (remainingQuantum > 0 && currentProcess.getBurstTime() > 0)  // loop until the process finishes
             {
-                double executionTime ;
-                if(currentProcess.getBurstTime()<= remainingQuantum)
-                {
-                    executionTime=currentProcess.getBurstTime();
-                }
-                else {
-                    executionTime=remainingQuantum;
-                }
-
-
+                double executionTime = Math.min(remainingQuantum, currentProcess.getBurstTime());
                 currentProcess.setBurstTime(currentProcess.getBurstTime() - executionTime);
+
                 // Check if the process is finished
                 if (currentProcess.getBurstTime() <= 0) {
                     executedProcesses.add(currentProcess);
-                    //scenario 3: The running process finished its job
-                    readyQueue.remove(currentProcess);
 
                     System.out.println("Time Details for Process " + currentProcess.getName() + " :  \n");
-                    System.out.println("Finish Time for Process " + currentProcess.getName() + ": " + (currentTime+executionTime));
-                    double turnaround=(currentTime+executionTime)-currentProcess.getArrivalTime();
-                    double waiting= currentTime-currentProcess.getArrivalTime();
+                    System.out.println("Finish Time for Process " + currentProcess.getName() + ": " + (currentTime + executionTime));
+                    double turnaround = (currentTime + executionTime) - currentProcess.getArrivalTime();
+                    double waiting = currentTime - currentProcess.getArrivalTime();
                     System.out.println("Waiting Time for " + currentProcess.getName() + ": " + waiting);
                     System.out.println("Turnaround Time for " + currentProcess.getName() + ": " + turnaround);
                     System.out.println("--------------------------------");
                     totalWaitingTime += waiting;
                     totalTurnaroundTime += turnaround;
+                    //scenario 3: The running process finished its job
+                    readyQueue.remove(currentProcess);
 
 
                 } else {
@@ -90,7 +82,7 @@ public class AG implements Ischeduler {
                     }
                     // scenario 2:The running process didn’t use all its quantum time based on another
                     //process converted from ready to running
-                    else if(remainingQuantum>0 && currentProcess.getBurstTime()>0) {
+                    else if (remainingQuantum > 0 && currentProcess.getBurstTime() > 0) {
                         readyQueue.add(currentProcess);
                         quantum += remainingQuantum;
                     }
@@ -103,22 +95,14 @@ public class AG implements Ischeduler {
                 System.out.println("--------------------------------");
 
                 // preemptive process
-                if (!currentProcess.isPreemptive() && remainingQuantum <= (0.5 * quantum)) {
+                if (!currentProcess.isPreemptive() && remainingQuantum > (0.5 * quantum)) {
                     currentProcess.setPreemptive(true);
-                    break;
-                }
+                    readyQueue.add(currentProcess);
 
-                //  process with the smallest AG factor
-                for (Process p : readyQueue) {
-                    if (calculateAGFactor(p) < agFactor && p.getArrivalTime() <= currentTime) {
-                        readyQueue.add(currentProcess);
-                        currentProcess = p;
-                        agFactor = calculateAGFactor(p);
-                        break;
-                    }
                 }
             }
             currentTime += quantum; // Update the current time
+
         }
         double averageWaitingTime = totalWaitingTime / executedProcesses.size();
         double averageTurnaroundTime = totalTurnaroundTime / executedProcesses.size();
@@ -126,6 +110,7 @@ public class AG implements Ischeduler {
         System.out.println("Average Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
         System.out.println("--------------------------------");
+
         // Print the order of executed processes
         System.out.println("Processes execution order:");
         for (Process process : executedProcesses) {

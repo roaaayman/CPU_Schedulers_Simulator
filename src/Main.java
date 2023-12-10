@@ -32,7 +32,9 @@ public class Main {
 
             System.out.println("Color: ");
             String color =scanner.next();
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,color));
+            System.out.println("random: ");
+            int random = scanner.nextInt();
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,color,random));
 
         }
 
