@@ -10,22 +10,28 @@ public class Process {
     private double waitTime;
     private double remainingtime;
     private boolean preemptive;
+    private int random;
 
 
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, String color) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, String color, int random) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
         this.originalBurstTime=burstTime;
         this.priorityNum=priorityNum;
         this.color=color;
+        this.random=random;
+
     }
 
     // Setters
     public void setName(String name) {
         this.name = name;
+    }
+    public void setRandom(int random){
+        this.random=random;
     }
 
     public void setColor(String color) {
@@ -50,7 +56,7 @@ public class Process {
     public void setWaitTime(double waitTime) {this.waitTime = waitTime;}
 
     public void setPreemptive(boolean preemptive) {
-        this.preemptive = preemptive;
+        this.preemptive = false;
     }
 
 
@@ -61,6 +67,7 @@ public class Process {
         return name;
     }
 
+    public int getRandom(){return random;}
     public String getColor() {
         return color;
     }
@@ -86,7 +93,7 @@ public class Process {
 
     public void incrementPrioritybyaging() {
 
-        priorityNum--;
+        priorityNum=1;
     }
 
     public boolean isPreemptive() {
