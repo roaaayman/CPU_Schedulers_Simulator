@@ -86,7 +86,7 @@ public class Process {
 
     public void incrementPrioritybyaging() {
 
-        priorityNum++;
+        priorityNum--;
     }
 
     public boolean isPreemptive() {
