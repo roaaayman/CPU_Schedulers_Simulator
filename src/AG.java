@@ -89,6 +89,31 @@ public class AG implements Ischeduler {
                             executedProcesses.add(currentProcess);
                             break;
                         }
+                        //scenario 1: check if the running process used all its quantum and has more job to do if yes add it to the queue and increase its quantum
+                        if (remainingQuantum <= 0 && currentProcess.getBurstTime()>0)
+                        {
+                            quantum+=Math.ceil(0.1*(quantum/2));
+                            readyQueue.add(currentProcess);
+                            break;
+                        }
+                        //scenario 2: check if the running process didnt use all of its quantum time because it was interupted
+                        else if ( remainingQuantum>0 && currentProcess.getBurstTime()>0)
+                        {
+                            readyQueue.add(currentProcess);
+                            quantum+=remainingQuantum;
+                            break;
+
+                        }
+                        //scenario 3: check if the running process finished its job
+                        else if(remainingQuantum == 0 && currentProcess.getBurstTime()<=0)
+                        {
+                            finishedProcesses.add(currentProcess);
+                            readyQueue.remove(currentProcess);
+                            quantum=0;
+                            break;
+                        }
+
+
                     }
                 }
                 remainingQuantum -= executionTime;
@@ -97,6 +122,7 @@ public class AG implements Ischeduler {
             //check if process has completely finished or not
             if (currentProcess.getBurstTime() > 0)
             {
+
                 readyQueue.add(currentProcess);
             } else {
                 finishedProcesses.add(currentProcess);
