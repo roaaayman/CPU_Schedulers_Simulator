@@ -63,7 +63,7 @@ public class Main {
                 break;
             case 3:
                 // Execute Priority Scheduler
-                PriorityScheduling priorityScheduler = new PriorityScheduling();
+                prioirtySchedling priorityScheduler = new prioirtySchedling();
                 priorityScheduler.setProcesses(new ArrayList<>(processes));
 
                 System.out.println("\nExecuting Priority Scheduling Algorithm: \n");
