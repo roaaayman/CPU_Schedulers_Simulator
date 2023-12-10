@@ -5,8 +5,6 @@ public class SRTF implements Ischeduler {
     private List<Process> processes;
     private static final double WaitTime_threshold = 10; // Maximum waiting time threshold
 
-    private int counter;
-
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
     }
@@ -56,7 +54,6 @@ public class SRTF implements Ischeduler {
                             processes.remove(preemptedProcess);
                             processes.add(0, process); // Move the pushed process to the front
                             processes.add(process); // Add the preempted process back to the end of the queue
-                            shortestIndex = 0;
                             break; // Exit the loop to execute the pushed process immediately
                         }
                     }
@@ -85,7 +82,6 @@ public class SRTF implements Ischeduler {
                 System.out.println("Turnaround Time for Process " + shortest.getName() + ": " + turnaroundTime);
                 System.out.println("--------------------------------");
             }
-
         }
 
         // Calculate averages
