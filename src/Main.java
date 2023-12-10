@@ -32,7 +32,9 @@ public class Main {
 
             System.out.println("Color: ");
             String color =scanner.next();
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,color));
+            System.out.println("random: ");
+            int random = scanner.nextInt();
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,color,random));
 
         }
 
@@ -40,7 +42,7 @@ public class Main {
         System.out.println("1. SJF (Shortest Job First)");
         System.out.println("2. SRTF (Shortest Remaining Time First)");
         System.out.println("3. Priority Scheduling");
-        System.out.println("4. Round Robin Scheduling");
+        System.out.println("4. AG scheduling");
 
         int choice = scanner.nextInt();
 
@@ -71,11 +73,14 @@ public class Main {
                 break;
             case 4:
                 // Execute Round Robin Scheduler
-                RR roundRobinScheduler = new RR(timeQuantum);
-                roundRobinScheduler.setProcesses(new ArrayList<>(processes));
+                //RR roundRobinScheduler = new RR(timeQuantum);
+                //roundRobinScheduler.setProcesses(new ArrayList<>(processes));
 
-                System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
-                roundRobinScheduler.schedule();
+                //System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
+                //roundRobinScheduler.schedule();
+                AG ag = new AG(timeQuantum);
+                ag.setProcesses(new ArrayList<>(processes));
+                ag.schedule();
                 break;
 
             default:

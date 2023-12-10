@@ -2,8 +2,8 @@ import java.util.*;
 
 public class AG implements Ischeduler {
     private List<Process> processes;
-
     private int quantum;
+    private int currentTime = 0;
 
     public AG(int quantum) {
         this.quantum = quantum;
@@ -24,7 +24,7 @@ public class AG implements Ischeduler {
         double burstTime = process.getBurstTime();
         double priority = process.getPriority();
 
-        int randomValue = randomFactor();
+        int randomValue = process.getRandom();
         double AGFactor;
 
         if (randomValue < 10) {
@@ -41,92 +41,80 @@ public class AG implements Ischeduler {
     public void schedule() {
         Queue<Process> readyQueue = new LinkedList<>(processes);
         List<Process> executedProcesses = new ArrayList<>();
-        List<Process> finishedProcesses = new ArrayList<>();
+        double totalWaitingTime = 0;
+        double totalTurnaroundTime = 0;
 
         while (!readyQueue.isEmpty()) {
-            Process currentProcess = readyQueue.poll(); //removes and returns the head of the queue.
+            Process currentProcess = readyQueue.poll();
             double agFactor = calculateAGFactor(currentProcess);
 
-            boolean isPreemptive = false;
+
             double remainingQuantum = quantum;
 
-            while (remainingQuantum > 0)
+            while (remainingQuantum > 0 && currentProcess.getBurstTime() > 0)  // loop until the process finishes
             {
-                double executionTime = Math.min(currentProcess.getBurstTime(), remainingQuantum);
+                double executionTime = Math.min(remainingQuantum, currentProcess.getBurstTime());
+                currentProcess.setBurstTime(currentProcess.getBurstTime() - executionTime);
 
-                // Non-preemptive AG logic
-                if (!isPreemptive && remainingQuantum <= (0.5 * quantum)) {
-                    isPreemptive = true;
-                    currentProcess.setPreemptive(true);
-                }
+                // Check if the process is finished
+                if (currentProcess.getBurstTime() <= 0) {
+                    executedProcesses.add(currentProcess);
 
-                // Process execution based on preemptive/non-preemptive AG
-                if (!currentProcess.isPreemptive())
-                {
-                    // Non-preemptive AG
-                    currentProcess.setBurstTime(currentProcess.getBurstTime() - executionTime);
+                    System.out.println("Time Details for Process " + currentProcess.getName() + " :  \n");
+                    System.out.println("Finish Time for Process " + currentProcess.getName() + ": " + (currentTime + executionTime));
+                    double turnaround = (currentTime + executionTime) - currentProcess.getArrivalTime();
+                    double waiting = currentTime - currentProcess.getArrivalTime();
+                    System.out.println("Waiting Time for " + currentProcess.getName() + ": " + waiting);
+                    System.out.println("Turnaround Time for " + currentProcess.getName() + ": " + turnaround);
+                    System.out.println("--------------------------------");
+                    totalWaitingTime += waiting;
+                    totalTurnaroundTime += turnaround;
+                    //scenario 3: The running process finished its job
+                    readyQueue.remove(currentProcess);
 
-                    if (currentProcess.getBurstTime() <= 0) {
-                        executedProcesses.add(currentProcess);
-                        break;
-                    }
+
                 } else {
-                    // Preemptive AG
-                    if (currentProcess.isPreemptive()) {
-                        // Check if there's a smaller AG-Factor process that arrived
-                        for (Process p : readyQueue) {
-                            if (calculateAGFactor(p) < agFactor) {
-                                readyQueue.add(currentProcess); // Add the current process back to the queue
-                                currentProcess = p; // Set the current process to the new smaller AG-Factor process
-                                agFactor = calculateAGFactor(p); // Update AG-Factor
-                                break;
-                            }
-                        }
-                        // Execute the current process for the shortest time between burst time and remaining quantum
-                        currentProcess.setBurstTime(currentProcess.getBurstTime() - executionTime);
-
-                        if (currentProcess.getBurstTime() <= 0) {
-                            executedProcesses.add(currentProcess);
-                            break;
-                        }
-                        //scenario 1: check if the running process used all its quantum and has more job to do if yes add it to the queue and increase its quantum
-                        if (remainingQuantum <= 0 && currentProcess.getBurstTime()>0)
-                        {
-                            quantum+=Math.ceil(0.1*(quantum/2));
-                            readyQueue.add(currentProcess);
-
-                        }
-                        //scenario 2: check if the running process didnt use all of its quantum time because it was interupted
-                        else if ( remainingQuantum>0 && currentProcess.getBurstTime()>0)
-                        {
-                            readyQueue.add(currentProcess);
-                            quantum+=remainingQuantum;
-
-
-                        }
-                        //scenario 3: check if the running process finished its job
-                        else if(remainingQuantum == 0 && currentProcess.getBurstTime()<=0)
-                        {
-                            finishedProcesses.add(currentProcess);
-                            readyQueue.remove(currentProcess);
-                            quantum=0;
-
-                        }
-
-
+                    //scenario 1: The running process used all its quantum time and it still have job to
+                    //do
+                    if (remainingQuantum == quantum) {
+                        quantum += Math.ceil(0.1 * (quantum / 2));
+                        readyQueue.add(currentProcess);
+                    }
+                    // scenario 2:The running process didn’t use all its quantum time based on another
+                    //process converted from ready to running
+                    else if (remainingQuantum > 0 && currentProcess.getBurstTime() > 0) {
+                        readyQueue.add(currentProcess);
+                        quantum += remainingQuantum;
                     }
                 }
+
                 remainingQuantum -= executionTime;
-            }
 
-            //check if process has completely finished or not
-            if (currentProcess.getBurstTime() > 0)
-            {
+                // Print history of quantum time
+                System.out.println("Quantum time updated for " + currentProcess.getName() + ": " + quantum);
+                System.out.println("--------------------------------");
 
-                readyQueue.add(currentProcess);
-            } else {
-                finishedProcesses.add(currentProcess);
+                // preemptive process
+                if (!currentProcess.isPreemptive() && remainingQuantum > (0.5 * quantum)) {
+                    currentProcess.setPreemptive(true);
+                    readyQueue.add(currentProcess);
+
+                }
             }
+            currentTime += quantum; // Update the current time
+
+        }
+        double averageWaitingTime = totalWaitingTime / executedProcesses.size();
+        double averageTurnaroundTime = totalTurnaroundTime / executedProcesses.size();
+
+        System.out.println("Average Waiting Time: " + averageWaitingTime);
+        System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
+        System.out.println("--------------------------------");
+
+        // Print the order of executed processes
+        System.out.println("Processes execution order:");
+        for (Process process : executedProcesses) {
+            System.out.println(process.getName());
         }
     }
 }
