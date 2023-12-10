@@ -4,6 +4,8 @@ import java.util.List;
 public class SRTF implements Ischeduler {
     private List<Process> processes;
 
+    private int counter;
+
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
     }
@@ -77,6 +79,7 @@ public class SRTF implements Ischeduler {
                     }
                 }
             }
+
         }
 
         // Calculate averages
