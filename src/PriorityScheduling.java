@@ -177,6 +177,7 @@ class prioirtySchedling implements Ischeduler {
             totalWaitingTime += waitingTime;
             totalTurnaroundTime += turnaroundTime;
             executedProcesses.add(currentProcess);
+
             // Find processes that have arrived but not executed yet
             List<Process> arrivedNotExecuted = new ArrayList<>();
             for (Process p : processes) {
@@ -192,6 +193,7 @@ class prioirtySchedling implements Ischeduler {
                 processes.remove(nextProcess);
                 processes.add(0, nextProcess);
             }
+
         }
         double averageWaitingTime = totalWaitingTime / executedProcesses.size();
         double averageTurnaroundTime = totalTurnaroundTime / executedProcesses.size();
