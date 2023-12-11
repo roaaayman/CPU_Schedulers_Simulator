@@ -48,7 +48,8 @@ public class ProcessInputGUI {
                 String colorString = JOptionPane.showInputDialog("Enter Color (e.g., RED, GREEN, BLUE): ");
                 Color color = getColorFromString(colorString); // Convert string color to Color object
 
-                processes.add(new Process(name, arrivalTime, burstTime,0, priorityNum,0));
+                processes.add(new Process(name, arrivalTime, burstTime,0, priorityNum,0,Color.red));
+                
                 processColors.add(color); // Store the color separately
             }
 
