@@ -30,11 +30,10 @@ public class Main {
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
 
-            System.out.println("Color: ");
-            String color =scanner.next();
+
             System.out.println("random: ");
             int random = scanner.nextInt();
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,color,random));
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,random));
 
         }
 
