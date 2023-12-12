@@ -173,6 +173,14 @@ class prioirtySchedling implements Ischeduler {
 
         List<Process> executedProcesses = new ArrayList<>();
 
+        for (Process p : processes) {
+            if (p.getPriority() >= 10) {
+                int newPriority = (int) (p.getPriority() * 0.1); // reducing priority by 10%
+                p.setPriority(newPriority);
+
+            }
+        }
+
         while (!processes.isEmpty()) {
             Process currentProcess = processes.remove(0);
             if (currentTime < currentProcess.getArrivalTime()) {
