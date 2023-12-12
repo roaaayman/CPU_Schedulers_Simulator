@@ -1,4 +1,5 @@
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -30,11 +31,12 @@ public class Main {
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
 
-            System.out.println("Color: ");
-            String color =scanner.next();
+
             System.out.println("random: ");
             int random = scanner.nextInt();
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,color,random));
+            System.out.println("color: ");
+            String color = String.valueOf(Color.decode(scanner.next()));
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,random,color));
 
         }
 

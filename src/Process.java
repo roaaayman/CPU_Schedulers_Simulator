@@ -1,7 +1,8 @@
+import java.awt.*;
+
 public class Process {
 
     private String name;
-    private String color;
     private double arrivalTime;
     private double originalBurstTime;
     private double burstTime;
@@ -11,18 +12,20 @@ public class Process {
     private double remainingtime;
     private boolean preemptive;
     private int random;
+    private String color;
 
 
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, String color, int random) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
         this.originalBurstTime=burstTime;
         this.priorityNum=priorityNum;
-        this.color=color;
+
         this.random=random;
+        this.color=color;
 
     }
 
@@ -34,9 +37,7 @@ public class Process {
         this.random=random;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
+
 
     public void setArrivalTime(double arrivalTime) {
         this.arrivalTime = arrivalTime;
@@ -58,6 +59,7 @@ public class Process {
     public void setPreemptive(boolean preemptive) {
         this.preemptive = false;
     }
+public void setColor(String color){this.color=color;}
 
 
 
@@ -68,9 +70,7 @@ public class Process {
     }
 
     public int getRandom(){return random;}
-    public String getColor() {
-        return color;
-    }
+
 
     public double getArrivalTime() {
         return arrivalTime;
@@ -98,6 +98,10 @@ public class Process {
 
     public boolean isPreemptive() {
         return preemptive;
+    }
+    public String getcolor()
+    {
+        return color;
     }
 
 
