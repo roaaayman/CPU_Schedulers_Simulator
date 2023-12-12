@@ -73,7 +73,7 @@ class prioirtySchedling implements Ischeduler {
             // Aging: Decrease priority of the process with the most waiting time
             if (!arrivedNotExecuted.isEmpty()) {
                 Process maxWaitingProcess = Collections.max(arrivedNotExecuted, Comparator.comparingDouble(Process::getWaitTime));
-                int newPriority = (int) (maxWaitingProcess.getPriority() * 0.1); // Example: reducing priority by 10%
+                int newPriority = (int)     (maxWaitingProcess.getPriority() * 0.1); // Example: reducing priority by 10%
                 maxWaitingProcess.setPriority(newPriority);
                 maxWaitingProcess.incrementWaitingTime(); // Increase waiting time for the chosen process
 
