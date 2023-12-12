@@ -147,15 +147,32 @@ class prioirtySchedling implements Ischeduler {
         }
     }
 
+    private void displayProcessDetails(List<Process> executedProcesses) {
+        for (Process process : executedProcesses) {
+            // Retrieve process details stored in the process object
+            double finishTime = process.getFinishTime();
+            double waitingTime = process.getWaitTime();
+            double turnaroundTime = process.getTurnaround();
+
+            System.out.println("--------------------------------");
+            System.out.println("Time Details for Process " + process.getName() + " :  \n");
+            System.out.println("Finish Time for Process " + process.getName() + ": " + finishTime);
+            System.out.println("Waiting Time for " + process.getName() + ": " + waitingTime);
+            System.out.println("Turnaround Time for " + process.getName() + ": " + turnaroundTime);
+            System.out.println("--------------------------------");
+        }
+    }
+
 
     @Override
     public void schedule() {
         sortBasedOnArrivalAndpriority();
         double currentTime = 0; // Initialize current time to 0
-
         double totalWaitingTime = 0;
         double totalTurnaroundTime = 0;
+
         List<Process> executedProcesses = new ArrayList<>();
+
         while (!processes.isEmpty()) {
             Process currentProcess = processes.remove(0);
             if (currentTime < currentProcess.getArrivalTime()) {
@@ -165,36 +182,42 @@ class prioirtySchedling implements Ischeduler {
             System.out.println("Executing Process: " + currentProcess.getName() + " from time " + startTime);
 
             currentTime += currentProcess.getBurstTime();
+
             double finishTime = currentTime;
             double waitingTime = startTime - currentProcess.getArrivalTime();
             double turnaroundTime = finishTime - currentProcess.getArrivalTime();
-            System.out.println("--------------------------------");
-            System.out.println("Time Details for Process " + currentProcess.getName() + " :  \n");
-            System.out.println("Finish Time for Process " + currentProcess.getName() + ": " + finishTime);
-            System.out.println("Waiting Time for " + currentProcess.getName() + ": " + waitingTime);
-            System.out.println("Turnaround Time for " + currentProcess.getName() + ": " + turnaroundTime);
-            System.out.println("--------------------------------");
-            totalWaitingTime += waitingTime;
-            totalTurnaroundTime += turnaroundTime;
+
+            // Store process details into the executedProcesses list
+            currentProcess.setFinishTime(finishTime);
+            currentProcess.setWaitTime(waitingTime);
+            currentProcess.setTurnaround(turnaroundTime);
             executedProcesses.add(currentProcess);
 
-            // Find processes that have arrived but not executed yet
-            List<Process> arrivedNotExecuted = new ArrayList<>();
+            // Check for the processes that arrived before the finish time of the current process
+            List<Process> arrivedProcesses = new ArrayList<>();
             for (Process p : processes) {
-                if (p.getArrivalTime() <= finishTime) {
-                    arrivedNotExecuted.add(p);
+                if (p.getArrivalTime() < finishTime) {
+                    arrivedProcesses.add(p);
                 }
             }
-            // Sort arrived processes based on priority
-            arrivedNotExecuted.sort(Comparator.comparingDouble(Process::getPriority));
 
-            if (!arrivedNotExecuted.isEmpty()) {
-                Process nextProcess = arrivedNotExecuted.get(0);
+            arrivedProcesses.sort(Comparator.comparingInt(Process::getPriority));
+            if (!arrivedProcesses.isEmpty()) {
+                Process nextProcess = arrivedProcesses.get(0);
                 processes.remove(nextProcess);
                 processes.add(0, nextProcess);
             }
 
+            totalWaitingTime += waitingTime;
+            totalTurnaroundTime += turnaroundTime;
+
+            // Sort arrived processes based on priority
+            processes.sort(Comparator.comparingDouble(Process::getPriority));
         }
+
+        // Display details of executed processes using the separate method
+        displayProcessDetails(executedProcesses);
+
         double averageWaitingTime = totalWaitingTime / executedProcesses.size();
         double averageTurnaroundTime = totalTurnaroundTime / executedProcesses.size();
         if (!executedProcesses.isEmpty()) {
@@ -203,8 +226,5 @@ class prioirtySchedling implements Ischeduler {
         } else {
             System.out.println("No processes executed.");
         }
-
-
-        }
     }
-
+}

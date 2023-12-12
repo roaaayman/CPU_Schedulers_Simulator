@@ -10,13 +10,29 @@ public class SRTF implements Ischeduler {
         this.processes = processes;
         this.waitingProcesses = new ArrayList<>(); // Initialize waitingProcesses list
     }
+
+    private void displayExecutedProcesses(List<Process> executedProcesses) {
+        for (Process process : executedProcesses) {
+            double finishTime = process.getFinishTime();
+            double waitingTime = process.getWaitTime();
+            double turnaroundTime = process.getTurnaround();
+
+            System.out.println("--------------------------------");
+            System.out.println("Time Details for Process " + process.getName() + " :  \n");
+            System.out.println("Finish Time for Process " + process.getName() + ": " + finishTime);
+            System.out.println("Waiting Time for Process " + process.getName() + ": " + waitingTime);
+            System.out.println("Turnaround Time for Process " + process.getName() + ": " + turnaroundTime);
+            System.out.println("--------------------------------");
+        }
+    }
     @Override
     public void schedule() {
         List<Process> executedProcesses = new ArrayList<>();
         double currentTime = 0;
         int completed = 0;
+        Process preemptedProcess = null; // Variable to store preempted process
 
-        while (completed != processes.size()) {
+        while (completed != processes.size() && !processes.isEmpty()) {
             double minBurst = Double.MAX_VALUE;
             int shortestIndex = -1;
 
@@ -45,7 +61,8 @@ public class SRTF implements Ischeduler {
                     if (process.getWaitTime() >= WaitTime_threshold) {
                         if (shortest.getBurstTime() > 0) {
                             System.out.println("****Preempting Process: " + shortest.getName() + " at time " + currentTime);
-                            Process preemptedProcess = shortest; // Temporarily store the current process
+                            preemptedProcess = shortest; // Store the current process to preempt
+
                             processes.remove(preemptedProcess);
 
                             if (!waitingProcesses.contains(preemptedProcess)) {
@@ -55,11 +72,13 @@ public class SRTF implements Ischeduler {
 
                             processes.add(0, process); // Push the new process to the front
                             System.out.println("****Pushing Process to Front : " + process.getName() + " at time " + currentTime);
-                            break; // Exit the loop to execute the pushed process immediately
+
+                            break;
                         }
                     }
                 }
             }
+
             double startTime = currentTime;
             System.out.println("Executing Process: " + shortest.getName() + " from time " + startTime);
 
@@ -74,16 +93,14 @@ public class SRTF implements Ischeduler {
                 double turnaroundTime = finishTime - shortest.getArrivalTime();
                 double waitingTime = turnaroundTime - shortest.getOriginalBurstTime();
 
+                shortest.setFinishTime(finishTime);
                 shortest.setWaitTime(waitingTime);
                 shortest.setTurnaround(turnaroundTime);
-                System.out.println("--------------------------------");
-                System.out.println("Time Details for Process " + shortest.getName() + " :  \n");
-                System.out.println("Finish Time for Process " + shortest.getName() + ": " + finishTime);
-                System.out.println("Waiting Time for Process " + shortest.getName() + ": " + waitingTime);
-                System.out.println("Turnaround Time for Process " + shortest.getName() + ": " + turnaroundTime);
-                System.out.println("--------------------------------");
+                executedProcesses.add(shortest);
+
             }
         }
+        displayExecutedProcesses(executedProcesses);
 
         // Calculate averages
         double totalWaitingTime = 0;

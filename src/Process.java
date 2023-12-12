@@ -9,6 +9,8 @@ public class Process {
     private int priorityNum;
     private double turnaround;
     private double waitTime;
+    private double finishTime;
+
     private double remainingtime;
     private boolean preemptive;
     private int random;
@@ -56,6 +58,7 @@ public class Process {
 
     public void setWaitTime(double waitTime) {this.waitTime = waitTime;}
 
+    public void setFinishTime(double finishTime) {this.finishTime = finishTime;}
     public void setPreemptive(boolean preemptive) {
         this.preemptive = false;
     }
@@ -89,6 +92,9 @@ public void setColor(String color){this.color=color;}
     public double getTurnaround() {return turnaround;}
 
     public double getWaitTime() {return waitTime;}
+
+    public double getFinishTime() {return finishTime;}
+
     public double getRemainingtime(){return remainingtime;}
 
     public void incrementPrioritybyaging() {
