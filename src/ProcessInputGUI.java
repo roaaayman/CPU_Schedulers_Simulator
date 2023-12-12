@@ -43,7 +43,7 @@ public class ProcessInputGUI {
 
             for (int i = 0; i < numProcesses; i++) {
                 String name = JOptionPane.showInputDialog("Enter Process Name: ");
-                double arrivalTime = Double.parseDouble(JOptionPane.showInputDialog("Enter Arrival Time: "));
+                int arrivalTime = (int) Double.parseDouble(JOptionPane.showInputDialog("Enter Arrival Time: "));
                 double burstTime = Double.parseDouble(JOptionPane.showInputDialog("Enter Burst Time: "));
                 int priorityNum = Integer.parseInt(JOptionPane.showInputDialog("Enter Priority Num: "));
                 String colorString = JOptionPane.showInputDialog("Enter Color (e.g., RED, GREEN, BLUE): ");

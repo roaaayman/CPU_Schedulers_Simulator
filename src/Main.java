@@ -22,7 +22,7 @@ public class Main {
             String name = scanner.next();
 
             System.out.print("Arrival Time: ");
-            double arrivalTime = scanner.nextDouble();
+            int arrivalTime = scanner.nextInt();
 
             System.out.print("Burst Time: ");
             double burstTime = scanner.nextDouble();

@@ -3,7 +3,7 @@ import java.awt.*;
 public class Process {
 
     private String name;
-    private double arrivalTime;
+    private int arrivalTime;
     private double originalBurstTime;
     private double burstTime;
     private int priorityNum;
@@ -21,7 +21,7 @@ public class Process {
 
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color) {
+    public Process(String name, int arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
@@ -46,7 +46,7 @@ public class Process {
     }
 
     public double getQuantum(){return Quantum;}
-    public void setArrivalTime(double arrivalTime) {
+    public void setArrivalTime(int arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
@@ -79,7 +79,7 @@ public void setColor(String color){this.color=color;}
     public int getRandom(){return random;}
 
 
-    public double getArrivalTime() {
+    public int getArrivalTime() {
         return arrivalTime;
     }
 
