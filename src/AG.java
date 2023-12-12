@@ -37,6 +37,29 @@ public class AG implements Ischeduler {
         return AGFactor;
     }
 
+
+    @Override
+    public void schedule() {
+
+        List<Process> ReadyProcesses = new ArrayList<>();
+        processes.sort(Comparator.comparingDouble(Process::getArrivalTime));
+
+        double currentTime=0;
+
+        while (!processes.isEmpty()) {
+            Process currentProcess = processes.remove(0);
+            ReadyProcesses.add(0,currentProcess);
+
+            if (currentTime < currentProcess.getArrivalTime())
+                currentTime = currentProcess.getArrivalTime();
+            }
+
+
+
+    }
+
+    }
+    /*
     @Override
     public void schedule() {
         Queue<Process> readyQueue = new LinkedList<>(processes);
@@ -117,4 +140,4 @@ public class AG implements Ischeduler {
             System.out.println(process.getName());
         }
     }
-}
+}*/
