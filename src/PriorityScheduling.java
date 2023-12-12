@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -38,14 +39,8 @@ class prioirtySchedling implements Ischeduler {
         double totalTurnaroundTime = 0;
         List<Process> executedProcesses = new ArrayList<>();
 
-        // Apply aging to process to increase the priority of the processes
-        for (Process p : processes) {
-            if (p.getPriority() >= 10) {
-                int newPriority = (int) (p.getPriority() * 0.1); // Example: reducing priority by 10%
-                p.setPriority(newPriority);
 
-            }
-        }
+
         while (!processes.isEmpty()) {
             Process currentProcess = processes.remove(0);
             if (currentTime < currentProcess.getArrivalTime()) {
@@ -75,21 +70,25 @@ class prioirtySchedling implements Ischeduler {
                     arrivedNotExecuted.add(p);
                 }
             }
-            // Sort arrived processes based on priority
-            arrivedNotExecuted.sort(Comparator.comparingDouble(Process::getPriority));
-
+            // Aging: Decrease priority of the process with the most waiting time
             if (!arrivedNotExecuted.isEmpty()) {
-                Process nextProcess = arrivedNotExecuted.get(0);
-                processes.remove(nextProcess);
-                processes.add(0, nextProcess);
+                Process maxWaitingProcess = Collections.max(arrivedNotExecuted, Comparator.comparingDouble(Process::getWaitTime));
+                int newPriority = (int) (maxWaitingProcess.getPriority() * 0.1); // Example: reducing priority by 10%
+                maxWaitingProcess.setPriority(newPriority);
+                maxWaitingProcess.incrementWaitingTime(); // Increase waiting time for the chosen process
+
+                // Sort arrived processes based on priority
+                arrivedNotExecuted.sort(Comparator.comparingInt(Process::getPriority));
+
+
+                    Process nextProcess = arrivedNotExecuted.get(0);
+                    processes.remove(nextProcess);
+                    processes.add(0, nextProcess);
+                }
             }
 
 
 
-
-
-
-        }
         double averageWaitingTime = totalWaitingTime / executedProcesses.size();
         double averageTurnaroundTime = totalTurnaroundTime / executedProcesses.size();
         if (!executedProcesses.isEmpty()) {
