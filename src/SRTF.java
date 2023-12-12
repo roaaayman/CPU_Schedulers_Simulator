@@ -3,12 +3,13 @@ import java.util.List;
 
 public class SRTF implements Ischeduler {
     private List<Process> processes;
-    private static final double WaitTime_threshold = 10; // Maximum waiting time threshold
+    private List<Process> waitingProcesses; // New list for waiting processes
+    private double WaitTime_threshold = 10; // Maximum waiting time threshold
 
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
+        this.waitingProcesses = new ArrayList<>(); // Initialize waitingProcesses list
     }
-
     @Override
     public void schedule() {
         List<Process> executedProcesses = new ArrayList<>();
@@ -42,18 +43,18 @@ public class SRTF implements Ischeduler {
                     process.setWaitTime(process.getWaitTime() + 1); // Increment wait time for waiting processes
 
                     if (process.getWaitTime() >= WaitTime_threshold) {
-                        // If wait time exceeds or equals the threshold, push the process to the front
-                        processes.remove(process);
-                        processes.add(0, process);
-                        System.out.println("****Pushing Process to Front : " + process.getName() + " at time " + currentTime);
-
-                        // Preempt the current process and execute the pushed process immediately
                         if (shortest.getBurstTime() > 0) {
                             System.out.println("****Preempting Process: " + shortest.getName() + " at time " + currentTime);
                             Process preemptedProcess = shortest; // Temporarily store the current process
                             processes.remove(preemptedProcess);
-                            processes.add(0, process); // Move the pushed process to the front
-                            processes.add(process); // Add the preempted process back to the end of the queue
+
+                            if (!waitingProcesses.contains(preemptedProcess)) {
+                                waitingProcesses.add(preemptedProcess);
+                                System.out.println("****Moving Preempted Process to Waiting List: " + preemptedProcess.getName() + " at time " + currentTime);
+                            }
+
+                            processes.add(0, process); // Push the new process to the front
+                            System.out.println("****Pushing Process to Front : " + process.getName() + " at time " + currentTime);
                             break; // Exit the loop to execute the pushed process immediately
                         }
                     }
