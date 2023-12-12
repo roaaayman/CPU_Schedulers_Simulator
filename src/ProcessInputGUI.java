@@ -11,6 +11,7 @@ public class ProcessInputGUI {
     private List<Process> processes;
     private List<Color> processColors; // New list to store colors
     private DefaultTableModel tableModel;
+    private int selectedAlgorithm;
 
     public ProcessInputGUI() {
         frame = new JFrame("Process Information");
@@ -48,15 +49,72 @@ public class ProcessInputGUI {
                 String colorString = JOptionPane.showInputDialog("Enter Color (e.g., RED, GREEN, BLUE): ");
                 Color color = getColorFromString(colorString); // Convert string color to Color object
 
-                processes.add(new Process(name, arrivalTime, burstTime,0, priorityNum,0,Color.red));
-                
+                processes.add(new Process(name, arrivalTime, burstTime,0, priorityNum,0,colorString));
+
                 processColors.add(color); // Store the color separately
             }
 
             displayTable(); // Call method to display table after input submission
+            // This switch statement executes the chosen algorithm
+            switch (selectedAlgorithm) {
+                case 1:
+                    // Execute SJF Scheduler
+                    SJF sjfScheduler = new SJF(contextSwitchCost);
+                    sjfScheduler.setProcesses(new ArrayList<>(processes));
+
+                    System.out.println("Executing SJF Scheduling Algorithm: \n");
+                    sjfScheduler.schedule();
+                    break;
+                case 2:
+                    // Execute SRTF Scheduler
+                    SRTF srtfScheduler = new SRTF();
+                    srtfScheduler.setProcesses(new ArrayList<>(processes));
+
+                    System.out.println("\nExecuting SRTF Scheduling Algorithm: \n");
+                    srtfScheduler.schedule();
+                    break;
+                case 3:
+                    // Execute Priority Scheduler
+                    prioirtySchedling priorityScheduler = new prioirtySchedling();
+                    priorityScheduler.setProcesses(new ArrayList<>(processes));
+
+                    System.out.println("\nExecuting Priority Scheduling Algorithm: \n");
+                    priorityScheduler.schedule();
+                    break;
+                case 4:
+
+                    AG ag = new AG(timeQuantum);
+                    ag.setProcesses(new ArrayList<>(processes));
+                    ag.schedule();
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Exiting...");
+            }
+
             frame.dispose(); // Close the input frame
         });
         panel.add(submitButton);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu scheduleMenu = new JMenu("Schedule");
+        JMenuItem sjfItem = new JMenuItem("SJF");
+        JMenuItem srtfItem = new JMenuItem("SRTF");
+        JMenuItem priorityItem = new JMenuItem("Priority");
+        JMenuItem agItem = new JMenuItem("AG");
+
+        sjfItem.addActionListener(e -> selectedAlgorithm = 1);
+        srtfItem.addActionListener(e -> selectedAlgorithm = 2);
+        priorityItem.addActionListener(e -> selectedAlgorithm = 3);
+        agItem.addActionListener(e -> selectedAlgorithm = 4);
+
+        scheduleMenu.add(sjfItem);
+        scheduleMenu.add(srtfItem);
+        scheduleMenu.add(priorityItem);
+        scheduleMenu.add(agItem);
+        menuBar.add(scheduleMenu);
+
+        frame.setJMenuBar(menuBar);
 
         frame.add(panel);
         frame.setVisible(true);
