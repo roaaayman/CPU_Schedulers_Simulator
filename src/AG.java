@@ -2,7 +2,10 @@ import java.util.*;
 
 public class AG implements Ischeduler {
     private List<Process> processes;
-    private int quantum;
+    private double quantum;
+    private boolean isPreemptive = false;
+    private int starttime;
+    private int finishtime;
     private int currentTime = 0;
 
     public AG(int quantum) {
@@ -19,7 +22,7 @@ public class AG implements Ischeduler {
         return random.nextInt(21); // Generates a number between 0 and 20
     }
 
-    private double calculateAGFactor(Process process) {
+    private double AGFactor(Process process) {
         double arrivalTime = process.getArrivalTime();
         double burstTime = process.getBurstTime();
         double priority = process.getPriority();
@@ -39,82 +42,88 @@ public class AG implements Ischeduler {
 
     @Override
     public void schedule() {
-        Queue<Process> readyQueue = new LinkedList<>(processes);
-        List<Process> executedProcesses = new ArrayList<>();
-        double totalWaitingTime = 0;
-        double totalTurnaroundTime = 0;
+        List<Process> readyQueue = new ArrayList<>();
+        Iterator<Process> iterator = processes.iterator();
 
-        while (!readyQueue.isEmpty()) {
-            Process currentProcess = readyQueue.poll();
-            double agFactor = calculateAGFactor(currentProcess);
+        while (iterator.hasNext()) {
+            Process process = iterator.next();
+            if (process.getArrivalTime() <= currentTime) {
+                readyQueue.add(process);
+                iterator.remove(); // Remove safely using iterator
+            }
+        }
 
 
-            double remainingQuantum = quantum;
-
-            while (remainingQuantum > 0 && currentProcess.getBurstTime() > 0)  // loop until the process finishes
+        if(!readyQueue.isEmpty() ) {
+            Process currentExecution = readyQueue.get(0);
+            double remaining = currentExecution.getBurstTime()-quantum;
+            double limit= Math.ceil(0.5*quantum);
+            if(remaining>limit)
             {
-                double executionTime = Math.min(remainingQuantum, currentProcess.getBurstTime());
-                currentProcess.setBurstTime(currentProcess.getBurstTime() - executionTime);
-
-                // Check if the process is finished
-                if (currentProcess.getBurstTime() <= 0) {
-                    executedProcesses.add(currentProcess);
-
-                    System.out.println("Time Details for Process " + currentProcess.getName() + " :  \n");
-                    System.out.println("Finish Time for Process " + currentProcess.getName() + ": " + (currentTime + executionTime));
-                    double turnaround = (currentTime + executionTime) - currentProcess.getArrivalTime();
-                    double waiting = currentTime - currentProcess.getArrivalTime();
-                    System.out.println("Waiting Time for " + currentProcess.getName() + ": " + waiting);
-                    System.out.println("Turnaround Time for " + currentProcess.getName() + ": " + turnaround);
-                    System.out.println("--------------------------------");
-                    totalWaitingTime += waiting;
-                    totalTurnaroundTime += turnaround;
-                    //scenario 3: The running process finished its job
-                    readyQueue.remove(currentProcess);
-
-
-                } else {
-                    //scenario 1: The running process used all its quantum time and it still have job to
-                    //do
-                    if (remainingQuantum == quantum) {
-                        quantum += Math.ceil(0.1 * (quantum / 2));
-                        readyQueue.add(currentProcess);
-                    }
-                    // scenario 2:The running process didn’t use all its quantum time based on another
-                    //process converted from ready to running
-                    else if (remainingQuantum > 0 && currentProcess.getBurstTime() > 0) {
-                        readyQueue.add(currentProcess);
-                        quantum += remainingQuantum;
-                    }
+                currentExecution.setBurstTime(remaining);
+                currentTime+=limit;
+                if (!isPreemptive && currentTime - currentExecution.getstarttime() >= limit) {
+                    isPreemptive=false;
                 }
 
-                remainingQuantum -= executionTime;
 
-                // Print history of quantum time
-                System.out.println("Quantum time updated for " + currentProcess.getName() + ": " + quantum);
-                System.out.println("--------------------------------");
+            }
+            else
+            {
+                currentExecution.setBurstTime(0);
+                currentExecution.setPreemptive(true);
+                if (!isPreemptive && currentTime - currentExecution.getstarttime() >= limit) {
+                    isPreemptive = true;
+                }
+                currentExecution.setEndtime(currentTime);
 
-                // preemptive process
-                if (!currentProcess.isPreemptive() && remainingQuantum > (0.5 * quantum)) {
-                    currentProcess.setPreemptive(true);
-                    readyQueue.add(currentProcess);
-
+            }
+        }
+        if(isPreemptive && !readyQueue.isEmpty())
+        {
+            Process currentExecution = readyQueue.get(0);
+            for(Process p:readyQueue)
+            {
+                double agFactorCurrent = AGFactor(currentExecution);
+                double agFactorNew = AGFactor(p);
+                if (agFactorNew < agFactorCurrent || (agFactorNew == agFactorCurrent && p.getArrivalTime() < currentExecution.getArrivalTime())) {
+                    readyQueue.add(currentExecution);
+                    readyQueue.remove(p);
+                    currentExecution = p;
                 }
             }
-            currentTime += quantum; // Update the current time
-
+            //scenario 1
+            if(currentExecution.getBurstTime()>0)
+            {
+                double limit=Math.ceil(0.1*quantum);
+                readyQueue.add(currentExecution);
+                currentExecution.setBurstTime(0);
+                currentExecution.setEndtime(currentTime);
+                isPreemptive=true;
+                currentExecution.setQuantum(currentExecution.getQuantum()+limit);
+            }
+            //scenario 2
+            if(currentExecution.getBurstTime()>0)
+            {
+                double remaining=currentExecution.getBurstTime()-quantum;
+                readyQueue.add(currentExecution);
+                currentExecution.setBurstTime(0);
+                currentExecution.setEndtime(currentTime);
+                isPreemptive=true;
+                currentExecution.setQuantum(currentExecution.getQuantum()+remaining);
+            }
+            if(currentExecution.getBurstTime()==0)
+            {
+                readyQueue.remove(currentExecution);
+                currentExecution.setEndtime(currentTime);
+                currentExecution.setQuantum(0);
+            }
+            currentExecution.setStarttime(currentTime);
         }
-        double averageWaitingTime = totalWaitingTime / executedProcesses.size();
-        double averageTurnaroundTime = totalTurnaroundTime / executedProcesses.size();
 
-        System.out.println("Average Waiting Time: " + averageWaitingTime);
-        System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
-        System.out.println("--------------------------------");
-
-        // Print the order of executed processes
-        System.out.println("Processes execution order:");
-        for (Process process : executedProcesses) {
-            System.out.println(process.getName());
-        }
     }
+
+
+
+
 }

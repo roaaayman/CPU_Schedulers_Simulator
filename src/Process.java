@@ -7,11 +7,15 @@ public class Process {
     private double originalBurstTime;
     private double burstTime;
     private int priorityNum;
+    private int starttime;
     private double turnaround;
+    private int endtime;
+
     private double waitTime;
     private double remainingtime;
     private boolean preemptive;
     private int random;
+    private double Quantum;
     private String color;
 
 
@@ -37,8 +41,11 @@ public class Process {
         this.random=random;
     }
 
+    public void setQuantum(double Quantum){
+        this.Quantum=Quantum;
+    }
 
-
+    public double getQuantum(){return Quantum;}
     public void setArrivalTime(double arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
@@ -104,6 +111,21 @@ public void setColor(String color){this.color=color;}
         return color;
     }
 
+    public void setStarttime(int starttime) {
+        this.starttime = starttime;
+    }
 
+    public int getstarttime()
+    {
+        return starttime;
+    }
+    public int getEndtime()
+    {
+        return endtime;
+    }
+
+    public void setEndtime(int endtime) {
+        this.endtime = endtime;
+    }
 }
 
