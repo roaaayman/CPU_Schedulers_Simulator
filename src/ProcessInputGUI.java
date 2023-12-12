@@ -12,6 +12,7 @@ public class ProcessInputGUI {
     private List<Color> processColors; // New list to store colors
     private DefaultTableModel tableModel;
     private int selectedAlgorithm;
+    private String schedulingOutput;
 
     public ProcessInputGUI() {
         frame = new JFrame("Process Information");
@@ -33,6 +34,8 @@ public class ProcessInputGUI {
 
         panel.add(new JLabel("Context Switch Cost for SJF: "));
         JTextField contextSwitchCostField = new JTextField();
+
+
         panel.add(contextSwitchCostField);
 
         JButton submitButton = new JButton("Submit");
@@ -49,48 +52,49 @@ public class ProcessInputGUI {
                 String colorString = JOptionPane.showInputDialog("Enter Color (e.g., RED, GREEN, BLUE): ");
                 Color color = getColorFromString(colorString); // Convert string color to Color object
 
-                processes.add(new Process(name, arrivalTime, burstTime,0, priorityNum,0,colorString));
-
+                processes.add(new Process(name, arrivalTime, burstTime, 0, priorityNum, 0, colorString));
                 processColors.add(color); // Store the color separately
             }
 
-            displayTable(); // Call method to display table after input submission
-            // This switch statement executes the chosen algorithm
+            // Create the table and display it
+            JTable table = displayTable();
+
+            // Execute the selected algorithm based on the choice stored in selectedAlgorithm
             switch (selectedAlgorithm) {
-                case 1:
-                    // Execute SJF Scheduler
+                case 1: // SJF
                     SJF sjfScheduler = new SJF(contextSwitchCost);
                     sjfScheduler.setProcesses(new ArrayList<>(processes));
-
-                    System.out.println("Executing SJF Scheduling Algorithm: \n");
                     sjfScheduler.schedule();
-                    break;
-                case 2:
-                    // Execute SRTF Scheduler
-                    SRTF srtfScheduler = new SRTF();
-                    srtfScheduler.setProcesses(new ArrayList<>(processes));
 
-                    System.out.println("\nExecuting SRTF Scheduling Algorithm: \n");
-                    srtfScheduler.schedule();
                     break;
-                case 3:
-                    // Execute Priority Scheduler
-                    prioirtySchedling priorityScheduler = new prioirtySchedling();
-                    priorityScheduler.setProcesses(new ArrayList<>(processes));
-
-                    System.out.println("\nExecuting Priority Scheduling Algorithm: \n");
-                    priorityScheduler.schedule();
+                case 2: // SRTF
+                    // Code for SRTF and other algorithms
                     break;
-                case 4:
-
-                    AG ag = new AG(timeQuantum);
-                    ag.setProcesses(new ArrayList<>(processes));
-                    ag.schedule();
+                case 3: // Priority
+                    // Code for Priority algorithm
                     break;
-
+                case 4: // AG
+                    AG agScheduler = new AG(timeQuantum);
+                    agScheduler.setProcesses(new ArrayList<>(processes));
+                    agScheduler.schedule();
+                   // schedulingOutput = "AG Scheduling Output:\n" + agScheduler.getOutput();
+                    break;
                 default:
-                    System.out.println("Invalid choice. Exiting...");
+                    schedulingOutput = "Invalid choice. No algorithm executed.";
+                    break;
             }
+
+            // Create split pane and display scheduling output and the table
+            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+            splitPane.setTopComponent(new JScrollPane(new JTextArea(schedulingOutput)));
+            splitPane.setBottomComponent(new JScrollPane(table));
+
+            JFrame outputFrame = new JFrame("Scheduling Output and Process Details");
+            outputFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            outputFrame.setSize(800, 600);
+
+            outputFrame.add(splitPane);
+            outputFrame.setVisible(true);
 
             frame.dispose(); // Close the input frame
         });
@@ -120,7 +124,7 @@ public class ProcessInputGUI {
         frame.setVisible(true);
     }
 
-    private void displayTable() {
+    private JTable displayTable() {
         JFrame tableFrame = new JFrame("Process Details");
         tableFrame.setSize(600, 400);
         tableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -159,6 +163,8 @@ public class ProcessInputGUI {
 
         tableFrame.add(panel);
         tableFrame.setVisible(true);
+
+        return table;
     }
 
     private Color getColorFromString(String colorString) {
