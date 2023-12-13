@@ -2,34 +2,37 @@ import java.awt.*;
 
 public class Process {
 
-    private String name;
-    private int arrivalTime;
-    private double originalBurstTime;
-    private double burstTime;
-    private int priorityNum;
-    private int starttime;
-    private double turnaround;
-    private int endtime;
+     String name;
+     int arrivalTime;
+     double originalBurstTime;
+     double burstTime;
+     double remainingburstTime;
+     int priorityNum;
+     int starttime;
+     double turnaround;
+     int endtime;
 
-    private double waitTime;
-    private double remainingtime;
-    private boolean preemptive;
-    private int random;
-    private double Quantum;
-    private String color;
+     double waitTime;
+     double remainingtime;
+     boolean preemptive;
+     int random;
+     double Quantum;
+     String color;
 
 
 
     //constructor
-    public Process(String name, int arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color) {
+    public Process(String name, int arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color,double Quantum) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
         this.originalBurstTime=burstTime;
         this.priorityNum=priorityNum;
-
+        this.remainingburstTime=burstTime;
+        this.Quantum=Quantum;
         this.random=random;
         this.color=color;
+        this.preemptive=false;
 
     }
 
