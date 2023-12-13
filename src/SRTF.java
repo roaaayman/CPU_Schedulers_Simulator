@@ -64,32 +64,34 @@ public class SRTF implements Ischeduler {
                 }
             }
 
+            Process shortest;
+
             if (shortestIndex == -1) {
                 currentTime++;
                 continue; // No eligible process found to execute at this time
-            }
+            } else {
+                shortest = processes.get(shortestIndex);
 
-            Process shortest = processes.get(shortestIndex);
-
-            for (Process process : processes) {
-                if (!executedProcesses.contains(process) && process != shortest
-                        && process.getArrivalTime() <= currentTime) {
-                    process.setWaitTime(process.getWaitTime() + 1); // Increment wait time for waiting processes
+                for (Process process : processes) {
+                    if (!executedProcesses.contains(process) && process != shortest
+                            && process.getArrivalTime() <= currentTime) {
+                        process.setWaitTime(process.getWaitTime() + 1); // Increment wait time for waiting processes
 
 
-                    if (process.getWaitTime() >= WaitTime_threshold) {
-                        if (shortest.getBurstTime() > 0) {
-                            System.out.println("****Preempting Process: " + shortest.getName() + " at time " + currentTime);
-                            executedProcesses.add(shortest); // Add preempted process to executed list
+                        if (process.getWaitTime() >= WaitTime_threshold) {
+                            if (shortest.getBurstTime() > 0) {
+                                System.out.println("****Preempting Process: " + shortest.getName() + " at time " + currentTime);
+                                executedProcesses.add(shortest); // Add preempted process to executed list
 
-                            processes.remove(shortest);
-                            waitingProcesses.add(shortest); // Move preempted process to waiting list
+                                processes.remove(shortest);
+                                waitingProcesses.add(shortest); // Move preempted process to waiting list
 
-                            processes.add(0, process); // Add the new process to the front
-                            System.out.println("****Pushing Process to Front : " + process.getName() + " at time " + currentTime);
+                                processes.add(0, process); // Add the new process to the front
+                                System.out.println("****Pushing Process to Front : " + process.getName() + " at time " + currentTime);
 
-                            shortest = process; // Update shortest to the new process
-                            break;
+                                shortest = process; // Update shortest to the new process
+                                break;
+                            }
                         }
                     }
                 }
