@@ -98,7 +98,6 @@ class prioirtySchedling implements Ischeduler {
             System.out.println("No processes executed.");
         }
 
-
         }
     }
 

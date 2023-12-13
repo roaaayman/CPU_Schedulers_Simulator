@@ -24,7 +24,6 @@ public class ProcessInputGUI extends JFrame {
         JTextField contextSwitchCostField = new JTextField();
         JTextField typeofschedule = new JTextField();
 
-
         inputPanel.add(new JLabel("Number of Processes:"));
         inputPanel.add(numProcessesField);
         inputPanel.add(new JLabel("Time Quantum for Round Robin:"));
@@ -74,7 +73,7 @@ public class ProcessInputGUI extends JFrame {
 //                    priorityScheduler.setProcesses(processes);
 //                    priorityScheduler.schedule();
 //                    break;
-//                case "Agile":
+//                case "AG":
 //                    // Execute Agile scheduling visually after entering data
 //                    AG agileScheduler = new AG();
 //                    agileScheduler.setProcesses(processes);
