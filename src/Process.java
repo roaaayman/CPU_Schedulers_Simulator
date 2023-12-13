@@ -12,12 +12,12 @@ public class Process {
     private double remainingtime;
     private boolean preemptive;
     private int random;
-    private String color;
+    private Color color;
 
 
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, Color color) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
@@ -59,7 +59,7 @@ public class Process {
     public void setPreemptive(boolean preemptive) {
         this.preemptive = false;
     }
-public void setColor(String color){this.color=color;}
+public void setColor(Color color){this.color=color;}
 
 
 
@@ -99,7 +99,7 @@ public void setColor(String color){this.color=color;}
     public boolean isPreemptive() {
         return preemptive;
     }
-    public String getcolor()
+    public Color getcolor()
     {
         return color;
     }
