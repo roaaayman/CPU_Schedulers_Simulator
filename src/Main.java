@@ -34,9 +34,9 @@ public class Main {
 
             System.out.println("random: ");
             int random = scanner.nextInt();
-            System.out.println("color: ");
-            String color = String.valueOf(Color.decode(scanner.next()));
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,random,color));
+            //System.out.println("color: ");
+            //String color = String.valueOf(Color.decode(scanner.next()));
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,random,Color.BLACK));
 
         }
 
