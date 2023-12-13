@@ -14,15 +14,12 @@ public class Process {
     private double remainingtime;
     private boolean preemptive;
     private int random;
-    private Color color;
-    private int starttime;
-    private int endtime;
-    private double waitingTime=0;
+    private String color;
 
 
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, Color color) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
@@ -34,29 +31,12 @@ public class Process {
 
     }
 
-
     // Setters
     public void setName(String name) {
         this.name = name;
     }
     public void setRandom(int random){
         this.random=random;
-    }
-    public void setStarttime(int starttime) {
-        this.starttime = starttime;
-    }
-
-    public int getstarttime()
-    {
-        return starttime;
-    }
-    public int getEndtime()
-    {
-        return endtime;
-    }
-
-    public void setEndtime(int endtime) {
-        this.endtime = endtime;
     }
 
 
@@ -82,7 +62,7 @@ public class Process {
     public void setPreemptive(boolean preemptive) {
         this.preemptive = false;
     }
-public void setColor(Color color){this.color=color;}
+public void setColor(String color){this.color=color;}
 
 
 
@@ -125,12 +105,9 @@ public void setColor(Color color){this.color=color;}
     public boolean isPreemptive() {
         return preemptive;
     }
-    public Color getcolor()
+    public String getcolor()
     {
         return color;
-    }
-    public void incrementWaitingTime() {
-        this.waitingTime++;
     }
 
 

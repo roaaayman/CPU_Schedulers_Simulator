@@ -1,131 +1,189 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProcessInputGUI extends JFrame {
+public class ProcessInputGUI {
+    private JFrame frame;
     private List<Process> processes;
+    private List<Color> processColors; // New list to store colors
     private DefaultTableModel tableModel;
-    private SJF sjfScheduler;
+    private int selectedAlgorithm;
+    private String schedulingOutput;
 
     public ProcessInputGUI() {
+        frame = new JFrame("Process Information");
+        frame.setSize(600, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         processes = new ArrayList<>();
-        tableModel = new DefaultTableModel();
+        processColors = new ArrayList<>(); // Initialize the color list
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(7, 2, 5, 5));
 
-        JPanel inputPanel = new JPanel(new GridLayout(0, 2, 5, 5));
-
+        panel.add(new JLabel("Number of Processes: "));
         JTextField numProcessesField = new JTextField();
+        panel.add(numProcessesField);
+
+        panel.add(new JLabel("Time Quantum for Round Robin: "));
         JTextField timeQuantumField = new JTextField();
+        panel.add(timeQuantumField);
+
+        panel.add(new JLabel("Context Switch Cost for SJF: "));
         JTextField contextSwitchCostField = new JTextField();
-        JTextField typeofschedule = new JTextField();
 
 
-        inputPanel.add(new JLabel("Number of Processes:"));
-        inputPanel.add(numProcessesField);
-        inputPanel.add(new JLabel("Time Quantum for Round Robin:"));
-        inputPanel.add(timeQuantumField);
-        inputPanel.add(new JLabel("Context Switch Cost for SJF:"));
-        inputPanel.add(contextSwitchCostField);
-        inputPanel.add(new JLabel("type of schedule"));
-        inputPanel.add(typeofschedule);
+        panel.add(contextSwitchCostField);
 
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> {
             int numProcesses = Integer.parseInt(numProcessesField.getText());
-            // Get other values like time quantum and context switch cost similarly
+            int timeQuantum = Integer.parseInt(timeQuantumField.getText());
+            int contextSwitchCost = Integer.parseInt(contextSwitchCostField.getText());
 
             for (int i = 0; i < numProcesses; i++) {
-                String name = JOptionPane.showInputDialog("Enter Process Name:");
-                double arrivalTime = Double.parseDouble(JOptionPane.showInputDialog("Enter Arrival Time:"));
-                double burstTime = Double.parseDouble(JOptionPane.showInputDialog("Enter Burst Time:"));
-                int priorityNum = Integer.parseInt(JOptionPane.showInputDialog("Enter Priority Num:"));
+                String name = JOptionPane.showInputDialog("Enter Process Name: ");
+                double arrivalTime = Double.parseDouble(JOptionPane.showInputDialog("Enter Arrival Time: "));
+                double burstTime = Double.parseDouble(JOptionPane.showInputDialog("Enter Burst Time: "));
+                int priorityNum = Integer.parseInt(JOptionPane.showInputDialog("Enter Priority Num: "));
+                String colorString = JOptionPane.showInputDialog("Enter Color (e.g., RED, GREEN, BLUE): ");
+                Color color = getColorFromString(colorString); // Convert string color to Color object
 
-                // Use JColorChooser to allow users to select a color from the screen
-                Color processColor = JColorChooser.showDialog(mainPanel, "Choose Color", Color.BLACK);
-
-                processes.add(new Process(name, arrivalTime, burstTime, 0, priorityNum, 0, processColor));
+                processes.add(new Process(name, arrivalTime, burstTime, 0, priorityNum, 0, colorString));
+                processColors.add(color); // Store the color separately
             }
 
-            displayProcessInformation();
-            // Get the input from typeofschedule field
-            String scheduleType = typeofschedule.getText();
-            // Use switch-case based on the scheduleType
-            switch (scheduleType) {
-                case "SJF":
-                    // Execute SJF visually after entering data
-                    sjfScheduler = new SJF(Integer.parseInt(contextSwitchCostField.getText()));
-                    sjfScheduler.setProcesses(processes);
+            // Create the table and display it
+            JTable table = displayTable();
+
+            // Execute the selected algorithm based on the choice stored in selectedAlgorithm
+            switch (selectedAlgorithm) {
+                case 1: // SJF
+                    SJF sjfScheduler = new SJF(contextSwitchCost);
+                    sjfScheduler.setProcesses(new ArrayList<>(processes));
                     sjfScheduler.schedule();
+
                     break;
-//                case "SRTF":
-//                    // Execute SRTF visually after entering data
-//                    SRTF srtfScheduler = new SRTF(Integer.parseInt(contextSwitchCostField.getText()));
-//                    srtfScheduler.setProcesses(processes);
-//                    srtfScheduler.schedule();
-//                    break;
-//                case "Priority":
-//                    // Execute Priority scheduling visually after entering data
-//                    prioirtySchedling priorityScheduler = new prioirtySchedling();
-//                    priorityScheduler.setProcesses(processes);
-//                    priorityScheduler.schedule();
-//                    break;
-//                case "Agile":
-//                    // Execute Agile scheduling visually after entering data
-//                    AG agileScheduler = new AG();
-//                    agileScheduler.setProcesses(processes);
-//                    agileScheduler.schedule();
-//                    break;
+                case 2: // SRTF
+                    // Code for SRTF and other algorithms
+                    break;
+                case 3: // Priority
+                    // Code for Priority algorithm
+                    break;
+                case 4: // AG
+                    AG agScheduler = new AG(timeQuantum);
+                    agScheduler.setProcesses(new ArrayList<>(processes));
+                    agScheduler.schedule();
+                   // schedulingOutput = "AG Scheduling Output:\n" + agScheduler.getOutput();
+                    break;
                 default:
-                    // Handle other cases or provide an error message for invalid input
+                    schedulingOutput = "Invalid choice. No algorithm executed.";
                     break;
             }
 
+            // Create split pane and display scheduling output and the table
+            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+            splitPane.setTopComponent(new JScrollPane(new JTextArea(schedulingOutput)));
+            splitPane.setBottomComponent(new JScrollPane(table));
 
+            JFrame outputFrame = new JFrame("Scheduling Output and Process Details");
+            outputFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            outputFrame.setSize(800, 600);
+
+            outputFrame.add(splitPane);
+            outputFrame.setVisible(true);
+
+            frame.dispose(); // Close the input frame
         });
+        panel.add(submitButton);
 
-        mainPanel.add(inputPanel, BorderLayout.NORTH);
-        mainPanel.add(submitButton, BorderLayout.SOUTH);
+        JMenuBar menuBar = new JMenuBar();
+        JMenu scheduleMenu = new JMenu("Schedule");
+        JMenuItem sjfItem = new JMenuItem("SJF");
+        JMenuItem srtfItem = new JMenuItem("SRTF");
+        JMenuItem priorityItem = new JMenuItem("Priority");
+        JMenuItem agItem = new JMenuItem("AG");
 
-        tableModel.addColumn("Name");
-        tableModel.addColumn("Arrival Time");
-        tableModel.addColumn("Burst Time");
-        tableModel.addColumn("Priority");
-        tableModel.addColumn("Color");
+        sjfItem.addActionListener(e -> selectedAlgorithm = 1);
+        srtfItem.addActionListener(e -> selectedAlgorithm = 2);
+        priorityItem.addActionListener(e -> selectedAlgorithm = 3);
+        agItem.addActionListener(e -> selectedAlgorithm = 4);
 
-        JTable processTable = new JTable(tableModel);
-        processTable.getColumnModel().getColumn(4).setCellRenderer(new ColorRenderer()); // Set renderer for Color column
-        JScrollPane tableScrollPane = new JScrollPane(processTable);
+        scheduleMenu.add(sjfItem);
+        scheduleMenu.add(srtfItem);
+        scheduleMenu.add(priorityItem);
+        scheduleMenu.add(agItem);
+        menuBar.add(scheduleMenu);
 
-        mainPanel.add(tableScrollPane, BorderLayout.CENTER);
+        frame.setJMenuBar(menuBar);
 
-        add(mainPanel);
-        setTitle("Process Information");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+        frame.add(panel);
+        frame.setVisible(true);
     }
 
-    private void displayProcessInformation() {
-        for (Process process : processes) {
-            String name = process.getName();
-            double arrivalTime = process.getArrivalTime();
-            double burstTime = process.getBurstTime();
-            int priority = process.getPriority();
-            Color color = process.getcolor();
+    private JTable displayTable() {
+        JFrame tableFrame = new JFrame("Process Details");
+        tableFrame.setSize(600, 400);
+        tableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        JPanel panel = new JPanel(new BorderLayout());
+
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("Process Name");
+        tableModel.addColumn("Arrival Time");
+        tableModel.addColumn("Burst Time");
+        tableModel.addColumn("Priority Num");
+        tableModel.addColumn("Color");
+
+        JTable table = new JTable(tableModel) {
+            public TableCellRenderer getCellRenderer(int row, int column) {
+                if (column == 4) {
+                    return new ColorRenderer();
+                }
+                return super.getCellRenderer(row, column);
+            }
+        };
+
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        for (int i = 0; i < processes.size(); i++) {
             tableModel.addRow(new Object[]{
-                    name,
-                    arrivalTime,
-                    burstTime,
-                    priority,
-                    color
+                    processes.get(i).getName(),
+                    processes.get(i).getArrivalTime(),
+                    processes.get(i).getBurstTime(),
+                    processes.get(i).getPriority(),
+                    processColors.get(i) // Retrieve color from the separate list
             });
+        }
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        tableFrame.add(panel);
+        tableFrame.setVisible(true);
+
+        return table;
+    }
+
+    private Color getColorFromString(String colorString) {
+        switch (colorString.trim().toUpperCase()) {
+            case "RED":
+                return Color.RED;
+            case "GREEN":
+                return Color.GREEN;
+            case "BLUE":
+                return Color.BLUE;
+            // Add more color options as needed
+            default:
+                try {
+                    // Try to parse the color from the string representation (e.g., "#RRGGBB")
+                    return Color.decode(colorString.trim());
+                } catch (NumberFormatException e) {
+                    // If unable to parse, return a default color (e.g., black)
+                    return Color.BLACK;
+                }
         }
     }
 
@@ -133,18 +191,13 @@ public class ProcessInputGUI extends JFrame {
         SwingUtilities.invokeLater(ProcessInputGUI::new);
     }
 
-    // Custom cell renderer to display Color as a colored square in the table
-    class ColorRenderer extends DefaultTableCellRenderer {
+    static class ColorRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (value instanceof Color) {
-                JLabel colorLabel = new JLabel();
-                colorLabel.setOpaque(true);
-                colorLabel.setBackground((Color) value);
-                return colorLabel;
-            }
-            return cellComponent;
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int row, int column) {
+            Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            comp.setBackground((Color) value);
+            return comp;
         }
     }
 }
