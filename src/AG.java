@@ -63,48 +63,48 @@ public class AG implements Ischeduler {
                 currentProcess.Quantum--;
                 currentProcess.remainingburstTime=currentProcess.burstTime--;
 
-                    if(!currentProcess.preemptive&&currentProcess.Quantum==Math.ceil(0.5* currentProcess.Quantum)) {
-                        currentProcess.preemptive = true;
-                        Process processWithSmallerAG = findProcessWithSmallerAG(readyQueue, AGFactor(currentProcess));
-                        if (processWithSmallerAG != null) {
-                            readyQueue.add(currentProcess);
-                            runningQueue.remove(currentProcess);
-                            currentProcess = processWithSmallerAG;
-                            runningQueue.add(currentProcess);
-                        }
-                        //scenario 2
-                        if(currentProcess.Quantum>0 && currentProcess.remainingburstTime>0)
+                if(!currentProcess.preemptive&&currentProcess.Quantum==Math.ceil(0.5* currentProcess.Quantum)) {
+                    currentProcess.preemptive = true;
+                    Process processWithSmallerAG = findProcessWithSmallerAG(readyQueue, AGFactor(currentProcess));
+                    if (processWithSmallerAG != null) {
+                        readyQueue.add(currentProcess);
+                        runningQueue.remove(currentProcess);
+                        currentProcess = processWithSmallerAG;
+                        runningQueue.add(currentProcess);
+                    }
+                    //scenario 2
+                    if(currentProcess.Quantum>0 && currentProcess.remainingburstTime>0)
+                    {
+                        readyQueue.add(currentProcess);
+                        runningQueue.remove(currentProcess);
+                        double unusedQuantum=currentProcess.Quantum;
+                        currentProcess.Quantum+=unusedQuantum;
+
+                    }
+                    else if (currentProcess.Quantum == 0) {
+                        //scenario 1
+                        if(currentProcess.remainingburstTime>0)
                         {
                             readyQueue.add(currentProcess);
                             runningQueue.remove(currentProcess);
-                            double unusedQuantum=currentProcess.Quantum;
-                            currentProcess.Quantum+=unusedQuantum;
-
-                        }
-                        else if (currentProcess.Quantum == 0) {
-                            //scenario 1
-                            if(currentProcess.remainingburstTime>0)
+                            int sum=0;
+                            for(Process p:processes)
                             {
-                                readyQueue.add(currentProcess);
-                                runningQueue.remove(currentProcess);
-                                int sum=0;
-                                for(Process p:processes)
-                                {
-                                    sum+=p.Quantum;
-                                }
-                                int mean=sum/ processes.size();
-                                currentProcess.Quantum+=Math.ceil(0.1*mean);
+                                sum+=p.Quantum;
                             }
-                            //scenario 3
-                            else {
-                                dieList.add(currentProcess);
-                                runningQueue.remove(currentProcess);
-                            }
-
+                            int mean=sum/ processes.size();
+                            currentProcess.Quantum+=Math.ceil(0.1*mean);
                         }
-
+                        //scenario 3
+                        else {
+                            dieList.add(currentProcess);
+                            runningQueue.remove(currentProcess);
+                        }
 
                     }
+
+
+                }
             }
             else {
                 if(!readyQueue.isEmpty())
