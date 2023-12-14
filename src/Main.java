@@ -9,7 +9,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         List<Process> processes = new ArrayList<>();
-        System.out.print("Enter the number of processes: ");
+        /*System.out.print("Enter the number of processes: ");
         int numProcesses = scanner.nextInt();
         System.out.print("Enter time quantum for Round Robin: ");
         int timeQuantum = scanner.nextInt();
@@ -36,11 +36,30 @@ public class Main {
             int random = scanner.nextInt();
             System.out.println("color: ");
             String color = String.valueOf(Color.decode(scanner.next()));
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,random,color,timeQuantum));
+            }*/
+            /*processes.add(new Process("p1", 0, 8, 8, 4,3,null));
+        processes.add(new Process("p2", 1, 4, 4, 9,8,null));
+        processes.add(new Process("p3", 2, 9, 9, 2,10,null));
+        processes.add(new Process("p4", 3, 5, 5, 8,12,null));
 
-        }
+        SRTF srtfScheduler = new SRTF();
+        srtfScheduler.setProcesses(new ArrayList<>(processes));
 
-        System.out.println("Select Scheduler:");
+        System.out.println("\nExecuting SRTF Scheduling Algorithm: \n");
+        srtfScheduler.schedule();
+*/
+
+        processes.add(new Process("p1", 0, 17, 17, 4,3,null));
+        processes.add(new Process("p2", 3, 6, 6, 9,8,null));
+        processes.add(new Process("p3", 4, 10, 10, 2,10,null));
+        processes.add(new Process("p4", 29, 4, 4, 8,12,null));
+
+        AG ag = new AG(4);
+        ag.setProcesses(processes);
+        ag.schedule();
+
+
+        /*System.out.println("Select Scheduler:");
         System.out.println("1. SJF (Shortest Job First)");
         System.out.println("2. SRTF (Shortest Remaining Time First)");
         System.out.println("3. Priority Scheduling");
@@ -88,7 +107,7 @@ public class Main {
             default:
                 System.out.println("Invalid choice. Exiting...");
         }
-
+*/
         scanner.close();
     }
 }

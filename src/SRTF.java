@@ -45,15 +45,12 @@ public class SRTF implements Ischeduler {
                         // If wait time exceeds or equals the threshold, push the process to the front
                         processes.remove(process);
                         processes.add(0, process);
-                        System.out.println("****Pushing Process to Front : " + process.getName() + " at time " + currentTime);
+                        System.out.println("**Pushing Process to Front : " + process.getName() + " at time " + currentTime);
 
                         // Preempt the current process and execute the pushed process immediately
                         if (shortest.getBurstTime() > 0) {
-                            System.out.println("****Preempting Process: " + shortest.getName() + " at time " + currentTime);
-                            Process preemptedProcess = shortest; // Temporarily store the current process
-                            processes.remove(preemptedProcess);
-                            processes.add(0, process); // Move the pushed process to the front
-                            processes.add(process); // Add the preempted process back to the end of the queue
+                            System.out.println("**Preempting Process: " + shortest.getName() + " at time " + currentTime);
+                            shortest=processes.get(0); // Add the preempted process back to the end of the queue
                             break; // Exit the loop to execute the pushed process immediately
                         }
                     }
