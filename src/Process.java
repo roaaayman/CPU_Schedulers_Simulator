@@ -7,6 +7,7 @@ public class Process {
      double originalBurstTime;
      double burstTime;
      double remainingburstTime;
+    double remainingquantum;
      int priorityNum;
      int starttime;
      double turnaround;
