@@ -1,9 +1,6 @@
-
-        import javax.swing.*;
-        import java.awt.*;
-        import java.util.ArrayList;
-        import java.util.Comparator;
-        import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class SJF implements Ischeduler {
     private List<Process> processes;
@@ -41,7 +38,7 @@ public class SJF implements Ischeduler {
     public void schedule() {
         sortBasedOnArrivalAndBurstTime();
 
-        // ProcessVisualization visualization = new ProcessVisualization(processes);
+       // ProcessVisualization visualization = new ProcessVisualization(processes);
         double currentTime = 0; // Initialize current time to 0
 
         double totalWaitingTime = 0;
@@ -109,35 +106,5 @@ public class SJF implements Ischeduler {
         double averageTurnaroundTime = totalTurnaroundTime / executedProcesses.size();
         System.out.println("Average Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
-        visualizeAlgorithmOutput(executedProcesses);
-    }
-    public void visualizeAlgorithmOutput(List<Process> processes) {
-        JFrame visualizationFrame = new JFrame("Process Visualization");
-        visualizationFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        visualizationFrame.setSize(800, 400);
-
-        JPanel visualizationPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                int startX = 50; // Initial X position for drawing rectangles
-                int startY = 50; // Initial Y position for drawing rectangles
-                int rectWidth = 50; // Width of each rectangle
-                int rectHeight = 30; // Height of each rectangle
-
-                for (Process process : processes) {
-                    double duration = process.getBurstTime(); // Calculate or fetch the duration of each process
-                    double endX = startX + duration * 10 ; // Calculate the end X position based on duration
-
-                    g.setColor(process.getcolor()); // Use the process color for the rectangle
-                    g.fillRect(startX, startY, (int) (endX - startX), rectHeight); // Draw the rectangle
-
-                    startX = (int) endX +context_switch_cost; // Move the starting X position for the next rectangle
-                }
-            }
-        };
-
-        visualizationFrame.add(visualizationPanel);
-        visualizationFrame.setVisible(true);
     }
 }
