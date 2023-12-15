@@ -1,6 +1,6 @@
-import java.util.*;
+import java.awt.*;
 
-class Process {
+public class Process {
 
     private String name;
     private double arrivalTime;
@@ -9,21 +9,15 @@ class Process {
     private int priorityNum;
     private double turnaround;
     private double waitTime;
-    private double finishTime;
-
-     int Quantum;
-     double remainingQuantum;
+    private double remainingtime;
     private boolean preemptive;
     private int random;
-    private String color;
-    double agFactor ;
-    int completionTime;
-
+    private Color color;
 
 
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, String color) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, int random, Color color) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
@@ -44,6 +38,7 @@ class Process {
     }
 
 
+
     public void setArrivalTime(double arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
@@ -61,22 +56,17 @@ class Process {
 
     public void setWaitTime(double waitTime) {this.waitTime = waitTime;}
 
-    public void setFinishTime(double finishTime) {this.finishTime = finishTime;}
-    public void setPreemptive(boolean preemptive) {this.preemptive = false;}
-    public void setColor(
-            String color){this.color=color;}
-    public void setQuantumTime(int quantum) {
-        this.Quantum = quantum;
-        this.remainingQuantum = quantum;
+    public void setPreemptive(boolean preemptive) {
+        this.preemptive = false;
     }
+public void setColor(Color color){this.color=color;}
+
+
+
 
     // Getters
     public String getName() {
         return name;
-    }
-
-    public double getAgFactor(){
-        return agFactor;
     }
 
     public int getRandom(){return random;}
@@ -95,55 +85,25 @@ class Process {
         return priorityNum;
     }
 
+
     public double getTurnaround() {return turnaround;}
 
     public double getWaitTime() {return waitTime;}
+    public double getRemainingtime(){return remainingtime;}
 
-    public double getFinishTime() {return finishTime;}
-    public int getQuantumTime() {
-        return Quantum;
-    }
-    public double getRemainingtime(){return remainingQuantum;}
     public void incrementPrioritybyaging() {
 
         priorityNum=1;
     }
+
     public boolean isPreemptive() {
         return preemptive;
     }
-    // Method to update burst time based on execution
-    public void execute() {
-        if (burstTime > 0) {
-            burstTime--;
-            remainingQuantum--;
-        }
-    }
-
-    // Method to check if the process still has work to do
-    public boolean hasJobToDo() {
-        return burstTime > 0;
-    }
-
-    // Update isPreemptive method based on scheduler logic
-    public boolean Preemptive()
+    public Color getcolor()
     {
-        return preemptive && burstTime > 0;
+        return color;
     }
 
 
-    public boolean getPreemptive() {
-        return preemptive ;
-    }
-
-    public double getRemainingQuantum() {
-        return  remainingQuantum ;
-    }
-
-    public int getCompletionTime() {
-        return completionTime;
-    }
-    public void setCompletionTime(int completionTime)
-    {
-        this.completionTime=completionTime;
-    }
 }
+
