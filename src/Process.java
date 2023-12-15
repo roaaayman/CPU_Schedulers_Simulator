@@ -11,12 +11,13 @@ class Process {
     private double waitTime;
     private double finishTime;
 
-    private int Quantum;
+     int Quantum;
      double remainingQuantum;
     private boolean preemptive;
     private int random;
     private String color;
     double agFactor ;
+    int completionTime;
 
 
 
@@ -136,5 +137,13 @@ class Process {
 
     public double getRemainingQuantum() {
         return  remainingQuantum ;
+    }
+
+    public int getCompletionTime() {
+        return completionTime;
+    }
+    public void setCompletionTime(int completionTime)
+    {
+        this.completionTime=completionTime;
     }
 }
