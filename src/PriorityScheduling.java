@@ -121,7 +121,7 @@ class prioirtySchedling implements Ischeduler {
                     double duration = process.getBurstTime(); // Calculate or fetch the duration of each process
                     double endX = startX + duration * 10 ; // Calculate the end X position based on duration
 
-                    g.setColor(process.getcolor()); // Use the process color for the rectangle
+                    g.setColor(process.getColor()); // Use the process color for the rectangle
                     g.fillRect(startX, startY, (int) (endX - startX), rectHeight); // Draw the rectangle
 
                     startX = (int) endX ; // Move the starting X position for the next rectangle

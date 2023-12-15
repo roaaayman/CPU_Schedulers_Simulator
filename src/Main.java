@@ -31,12 +31,7 @@ public class Main {
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
 
-
-            System.out.println("random: ");
-            int random = scanner.nextInt();
-            //System.out.println("color: ");
-            //String color = String.valueOf(Color.decode(scanner.next()));
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,random,Color.BLACK));
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,Color.BLACK));
 
         }
 
@@ -74,12 +69,6 @@ public class Main {
                 priorityScheduler.schedule();
                 break;
             case 4:
-                // Execute Round Robin Scheduler
-                //RR roundRobinScheduler = new RR(timeQuantum);
-                //roundRobinScheduler.setProcesses(new ArrayList<>(processes));
-
-                //System.out.println("\nExecuting Round Robin Scheduling Algorithm: \n");
-                //roundRobinScheduler.schedule();
                 AG ag = new AG(timeQuantum);
                 ag.setProcesses(new ArrayList<>(processes));
                 ag.schedule();

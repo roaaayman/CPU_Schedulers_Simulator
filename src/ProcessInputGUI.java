@@ -120,7 +120,7 @@ public class ProcessInputGUI extends JFrame {
             double arrivalTime = process.getArrivalTime();
             double burstTime = process.getBurstTime();
             int priority = process.getPriority();
-            Color color = process.getcolor();
+            Color color = process.getColor();
 
             tableModel.addRow(new Object[]{
                     name,
