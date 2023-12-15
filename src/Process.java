@@ -24,7 +24,7 @@ class Process {
 
 
     //constructor
-    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, Color color) {
+    public Process(String name, double arrivalTime, double burstTime , double originalBurstTime , int priorityNum, Color color, int random) {
         this.name=name;
         this.arrivalTime=arrivalTime;
         this.burstTime=burstTime;
@@ -120,7 +120,6 @@ class Process {
     public void execute() {
         if (burstTime > 0) {
             burstTime--;
-            remainingQuantum--;
         }
     }
 
@@ -143,7 +142,9 @@ class Process {
     public double getRemainingQuantum() {
         return  remainingQuantum ;
     }
-
+    public void decreaseRemainingQuantum() {
+        remainingQuantum--;
+    }
     public int getCompletionTime() {
         return completionTime;
     }

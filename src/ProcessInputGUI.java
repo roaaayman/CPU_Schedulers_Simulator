@@ -48,7 +48,7 @@ public class ProcessInputGUI extends JFrame {
                 // Use JColorChooser to allow users to select a color from the screen
                 Color processColor = JColorChooser.showDialog(mainPanel, "Choose Color", Color.BLACK);
 
-                processes.add(new Process(name, arrivalTime, burstTime, 0, priorityNum, 0, processColor));
+                processes.add(new Process(name, arrivalTime, burstTime, 0, priorityNum, processColor,0));
             }
 
             displayProcessInformation();
@@ -56,29 +56,29 @@ public class ProcessInputGUI extends JFrame {
             String scheduleType = typeofschedule.getText();
             // Use switch-case based on the scheduleType
             switch (scheduleType) {
-                case "SJF":
+                case "sjf":
                     // Execute SJF visually after entering data
                     sjfScheduler = new SJF(Integer.parseInt(contextSwitchCostField.getText()));
                     sjfScheduler.setProcesses(processes);
                     sjfScheduler.schedule();
                     break;
-//                case "SRTF":
-//                    // Execute SRTF visually after entering data
-//                    SRTF srtfScheduler = new SRTF(Integer.parseInt(contextSwitchCostField.getText()));
-//                    srtfScheduler.setProcesses(processes);
-//                    srtfScheduler.schedule();
-//                    break;
-                  case "Priority":
-                      // Execute Priority Scheduler
-                      prioirtySchedling priorityScheduler = new prioirtySchedling();
-                      priorityScheduler.setProcesses(new ArrayList<>(processes));
+                case "srtf":
+                    // Execute SRTF visually after entering data
+                    SRTF srtfScheduler = new SRTF();
+                    srtfScheduler.setProcesses(processes);
+                    srtfScheduler.schedule();
+                    break;
+                case "Priority":
+                    // Execute Priority Scheduler
+                    prioirtySchedling priorityScheduler = new prioirtySchedling();
+                    priorityScheduler.setProcesses(new ArrayList<>(processes));
 
-                      System.out.println("\nExecuting Priority Scheduling Algorithm: \n");
-                      priorityScheduler.schedule();
-                      break;
+                    System.out.println("\nExecuting Priority Scheduling Algorithm: \n");
+                    priorityScheduler.schedule();
+                    break;
 
 //                case "AG":
-//                    // Execute Agile scheduling visually after entering data
+//                    // Execute AG scheduling visually after entering data
 //                    AG agileScheduler = new AG();
 //                    agileScheduler.setProcesses(processes);
 //                    agileScheduler.schedule();

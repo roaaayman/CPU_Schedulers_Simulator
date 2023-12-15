@@ -23,7 +23,7 @@ class AG implements Ischeduler {
         double burstTime = process.getBurstTime();
         double priority = process.getPriority();
 
-        int randomValue = randomFactor();
+        int randomValue = process.getRandom();
         double AGFactor;
 
         if (randomValue < 10) {
@@ -38,27 +38,27 @@ class AG implements Ischeduler {
     }
 
     // Helper method to find the process with the smallest AG-Factor from the ready queue
-    private Process findSmallestAGFactor(List<Process> readyQueue) {
+    private Process findNextProcess(List<Process> readyQueue, int currentTime) {
         if (readyQueue.isEmpty()) {
             return null;
         }
 
-        Process smallestprocess = readyQueue.get(0);
-        double smallestAGFactor = calculateAGFactor(smallestprocess);
+        Process nextProcess = readyQueue.get(0);
+        double smallestAGFactor = calculateAGFactor(nextProcess);
 
-        for (int i=1 ; i<readyQueue.size();i++) {
-            Process process=readyQueue.get(i);
+        for (Process process : readyQueue) {
             double agFactor = calculateAGFactor(process);
-            if (agFactor < smallestAGFactor) {
+            process.agFactor = agFactor;
+            if (agFactor < smallestAGFactor && process.getArrivalTime() >= currentTime) {
                 smallestAGFactor = agFactor;
-                smallestprocess = process;
+                nextProcess = process;
             }
         }
 
-        readyQueue.remove(smallestprocess);
-        return smallestprocess;
+        return nextProcess;
     }
 
+    // Helper method to calculate the mean of the quantum values in the ready queue
     private double getMeanQuantum(List<Process> readyQueue) {
         if (readyQueue.isEmpty()) {
             return 0;
@@ -72,97 +72,97 @@ class AG implements Ischeduler {
         return totalQuantum / readyQueue.size();
     }
 
-    private void scenario_1(Process runningProcess,List<Process> readyQueue,double meanOfQuantum)
+    public void preemptive()
+
     {
 
-        int newQuantum = (int) Math.ceil(1.1 * (quantum + meanOfQuantum));
-        System.out.println("Updated Quantum for " + runningProcess.getName() + ": " + runningProcess.getQuantumTime());
-        runningProcess.setQuantumTime(newQuantum);
-        readyQueue.add(runningProcess);
-        runningProcess = null;
     }
-    private void scenario_2(Process runningProcess,List<Process> readyQueue)
-    {
-
-        double newQuantum = runningProcess.getRemainingQuantum() + runningProcess.getQuantumTime();
-        runningProcess.setQuantumTime((int) newQuantum);
-        System.out.println("Updated Quantum for " + runningProcess.getName() + ": " + runningProcess.getQuantumTime());
-        readyQueue.add(runningProcess);
-        runningProcess = null;
-    }
-
     @Override
     public void schedule() {
-        List<Process> readyQueue = new ArrayList<>(processes);
-        List<Process> dieList = new ArrayList<>();
-        Process runningProcess = null;
+        for(Process p:processes) {
+            p.setQuantumTime(quantum);
+        }
+        List<Process> readyQueue = new ArrayList<>(processes); // Make a copy of processes to act as the ready queue
+        List<Process> dieList = new ArrayList<>(); // List to hold finished processes
+        Process runningProcess = null; // Track the currently running process
         int time = 0;
 
-
+        double meanOfQuantum = getMeanQuantum(readyQueue);
+        System.out.println("AG Factors:");
+        for (Process process : processes) {
+            double agFactor = calculateAGFactor(process);
+            System.out.println("Process: " + process.getName() + ", AG Factor: " + agFactor);
+        }
 
 
         while (!readyQueue.isEmpty()) {
+            for(Process p:readyQueue) {
+                calculateAGFactor(p);
+            }
+            readyQueue.sort(Comparator.comparing(Process::getAgFactor));
             System.out.println("Current Time: " + time);
-            if (runningProcess == null) {
-                for (Process p : readyQueue) {
-                    if (p.getArrivalTime() <= time) {
-                        runningProcess = readyQueue.remove(readyQueue.indexOf(p));
-                        runningProcess.setPreemptive(false);
-                        break;
-                    }
 
+            for (Process p : readyQueue) {
+                if (p.getArrivalTime() <= time) {
+                    runningProcess = readyQueue.remove(readyQueue.indexOf(p));
+                    runningProcess.setPreemptive(false);
+                    break;
                 }
             }
 
-            if (runningProcess != null) {
-                System.out.println("Time " + time + ":" + runningProcess.getName() + " is running");
 
-                // Non-preemptive AG phase
-                if (!runningProcess.getPreemptive()) {
-                    int halfQuantum = (int) Math.ceil(runningProcess.getQuantumTime() * 0.5);
+            if (!runningProcess.getPreemptive()) {
+                int halfQuantum = (int) Math.ceil(runningProcess.getRemainingQuantum() * 0.5); // 50% of the quantum time
+                for (int i = 0; i <= halfQuantum; i++) {
+                    System.out.println("Time " + time + ":" + runningProcess.getName() + " is running");
+                    runningProcess.decreaseRemainingQuantum();
+                    runningProcess.execute();
+                    time++;
+                }
+                runningProcess.setPreemptive(true);
+                System.out.println("Updated Quantum for " + runningProcess.getName() + ": " + runningProcess.getRemainingQuantum());
+            }
 
-                    for (int i = 0; i < halfQuantum; i++) {
-                        runningProcess.execute();
-                        time++;
-                    }
-
-                    runningProcess.setPreemptive(true);
-                    System.out.println("Preemption: Switched to " + runningProcess.getName() + " with quantum time: " + runningProcess.getQuantumTime());
-                } else {
+            while(runningProcess.hasJobToDo()) {
+                Process newProcess = findNextProcess(readyQueue, time);
+                if(newProcess == null || newProcess.getAgFactor() > runningProcess.getAgFactor()) {
+                    System.out.println("Time " + time + ":" + runningProcess.getName() + " is running");
                     time++;
                     runningProcess.execute();
-                    Process lowestAGProcess = findSmallestAGFactor(readyQueue);
-
-                    if (lowestAGProcess != null && calculateAGFactor(lowestAGProcess) < calculateAGFactor(runningProcess)) {
-                        System.out.println("**Preempting Process: " + runningProcess.getName() + " at time " + time);
-                        readyQueue.add(runningProcess);  // Add the preempted process back to the ready queue
-                        runningProcess = lowestAGProcess; // Set the running process to the one with the least AG factor
-                        time--; // Stay at the same time to re-evaluate the new running process
-                    }
-                }
-
-                if (runningProcess.hasJobToDo()) {
-                    if (runningProcess.getRemainingQuantum() == 0) {
-                        // Process used all its quantum time and still has a job to do
-                        scenario_1(runningProcess,readyQueue,getMeanQuantum(readyQueue));
-
-                    } else {
-                        // Scenario ii: Process didn't use all its quantum time based on another process conversion
-                        scenario_2(runningProcess,readyQueue);
-                    }
-                } else {
-                    // Scenario iii: Process finished its job
-                    runningProcess.setQuantumTime(0);
-                    int completionTime=time;
-                    runningProcess.setCompletionTime(completionTime);
                     System.out.println("Updated Quantum for " + runningProcess.getName() + ": " + runningProcess.getQuantumTime());
-                    dieList.add(runningProcess);
-                    runningProcess = null;
+                } else {
+                    break;
                 }
-            } else {
-                // No process is running at this time
-                time++;
             }
+
+
+
+
+            // Check the scenarios based on the completion of the quantum time
+            if (runningProcess.hasJobToDo()) {
+                if (runningProcess.getRemainingQuantum() == 0) {
+                    // Scenario i: Process used all its quantum time and still has job to do
+                    int newQuantum = quantum + (int) Math.ceil(0.1 * (meanOfQuantum));
+                    System.out.println("1- Updated Quantum for " + runningProcess.getName() + ": " + runningProcess.getQuantumTime());
+                    runningProcess.setQuantumTime(newQuantum);
+                    readyQueue.add(runningProcess);
+                } else {
+                    // Scenario ii: Process didn't use all its quantum time based on another process conversion
+                    double newQuantum = runningProcess.getRemainingQuantum() + runningProcess.getQuantumTime();
+                    runningProcess.setQuantumTime((int) newQuantum);
+                    System.out.println("2- Updated Quantum for " + runningProcess.getName() + ": " + runningProcess.getQuantumTime());
+
+                    readyQueue.add(runningProcess); // Add the process back to the end of the queue
+                }
+            } else if (!runningProcess.hasJobToDo()) {
+                // Scenario iii: Process finished its job
+                runningProcess.setQuantumTime(0);
+                System.out.println("Updated Quantum for " + runningProcess.getName() + ": " + runningProcess.getQuantumTime());
+                dieList.add(runningProcess);
+            }
+
+            System.out.println("Running Process: " + (runningProcess.getBurstTime() == 0 ? runningProcess.getName() : "None"));
+            // System.out.println("Ready Queue Size: " + readyQueue.size());
         }
         int totalWaitingTime = 0;
         int totalTurnaroundTime = 0;

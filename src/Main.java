@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,12 @@ public class Main {
             System.out.println("Priority Num: ");
             int priorityNum = scanner.nextInt();
 
-            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,Color.BLACK));
+
+            System.out.println("random: ");
+            int random = scanner.nextInt();
+            //System.out.println("color: ");
+            //String color = String.valueOf(Color.decode(scanner.next()));
+            processes.add(new Process(name, arrivalTime, burstTime, originalBurstTime, priorityNum,Color.BLACK,random));
 
         }
 
@@ -69,6 +73,7 @@ public class Main {
                 priorityScheduler.schedule();
                 break;
             case 4:
+
                 AG ag = new AG(timeQuantum);
                 ag.setProcesses(new ArrayList<>(processes));
                 ag.schedule();

@@ -1,9 +1,12 @@
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SRTF implements Ischeduler {
     private List<Process> processes;
     private static final double WaitTime_threshold = 10; // Maximum waiting time threshold
+    private JFrame frame;
 
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
@@ -12,6 +15,7 @@ public class SRTF implements Ischeduler {
     @Override
     public void schedule() {
         List<Process> executedProcesses = new ArrayList<>();
+        List<Process> currentShortestProcesses = new ArrayList<>(); // Track the current list of shortest processes
         double currentTime = 0;
         int completed = 0;
 
@@ -34,27 +38,24 @@ public class SRTF implements Ischeduler {
             }
 
             Process shortest = processes.get(shortestIndex);
+            currentShortestProcesses.add(shortest); // Add the current shortest process to the list
 
             // Check and handle processes exceeding the wait time threshold
             for (Process process : processes) {
                 if (!executedProcesses.contains(process) && process != shortest
                         && process.getArrivalTime() <= currentTime) {
-                    process.setWaitTime(process.getWaitTime() + 1); // Increment wait time for waiting processes
+                    process.setWaitTime(process.getWaitTime() + 1);
 
                     if (process.getWaitTime() >= WaitTime_threshold) {
-                        // If wait time exceeds or equals the threshold, push the process to the front
                         processes.remove(process);
                         processes.add(0, process);
-                        System.out.println("****Pushing Process to Front : " + process.getName() + " at time " + currentTime);
+                        System.out.println("**Pushing Process to Front : " + process.getName() + " at time " + currentTime);
 
-                        // Preempt the current process and execute the pushed process immediately
                         if (shortest.getBurstTime() > 0) {
-                            System.out.println("****Preempting Process: " + shortest.getName() + " at time " + currentTime);
-                            Process preemptedProcess = shortest; // Temporarily store the current process
-                            processes.remove(preemptedProcess);
-                            processes.add(0, process); // Move the pushed process to the front
-                            processes.add(process); // Add the preempted process back to the end of the queue
-                            break; // Exit the loop to execute the pushed process immediately
+                            System.out.println("**Preempting Process: " + shortest.getName() + " at time " + currentTime);
+                            shortest = processes.get(0);
+                            currentShortestProcesses.add(shortest); // Add the preempted process to the list
+                            break;
                         }
                     }
                 }
@@ -82,6 +83,9 @@ public class SRTF implements Ischeduler {
                 System.out.println("Turnaround Time for Process " + shortest.getName() + ": " + turnaroundTime);
                 System.out.println("--------------------------------");
             }
+
+            // Update the visualization with the current list of shortest processes
+
         }
 
         // Calculate averages
@@ -98,5 +102,39 @@ public class SRTF implements Ischeduler {
 
         System.out.println("Average Waiting Time: " + averageWaitingTime);
         System.out.println("Average Turnaround Time: " + averageTurnaroundTime);
+        System.out.println("Visualizing...");
+        visualizeAlgorithmOutput(currentShortestProcesses);
+
+
+
+    }
+
+    public void visualizeAlgorithmOutput(List<Process> processes) {
+        JFrame visualizationFrame = new JFrame("Process Visualization");
+        visualizationFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        visualizationFrame.setSize(800, 400);
+
+        JPanel visualizationPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int startX = 50; // Initial X position for drawing rectangles
+                int startY = 50; // Initial Y position for drawing rectangles
+                int rectHeight = 30; // Height of each rectangle
+
+                for (Process process : processes) {
+                    double duration = process.getOriginalBurstTime() - process.getBurstTime(); // Calculate the actual duration
+                    double endX = startX + duration * 10; // Calculate the end X position based on duration
+
+                    g.setColor(process.getColor()); // Use the process color for the rectangle
+                    g.fillRect(startX, startY, (int) (duration * 10), rectHeight); // Draw the rectangle
+
+                    startX = (int) endX; // Move the starting X position for the next rectangle
+                }
+            }
+        };
+
+        visualizationFrame.add(visualizationPanel);
+        visualizationFrame.setVisible(true);
     }
 }
